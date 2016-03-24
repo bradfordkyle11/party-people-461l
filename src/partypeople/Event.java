@@ -21,6 +21,25 @@ public class Event extends Observable {
 	private String category;
 	//private Image picture;
 	
+	public void updateEvent(Event newEvent){
+		this.name = newEvent.getName();
+		this.owner = newEvent.getOwner();
+		this.attending = newEvent.getAttending();
+		this.location = newEvent.getLocation();
+		this.date = newEvent.getDate();
+		this.description = newEvent.getDescription();
+		this.comments = newEvent.getComments();
+		this.privateEvent = newEvent.isPrivateEvent();
+		this.password = newEvent.getPassword();
+		this.price = newEvent.getPrice();
+		this.itemsNeeded = newEvent.getItemsNeeded();
+		this.category = newEvent.getCategory();
+		
+		//figure out what changed and turn it into a string to 
+		//pass to the observers, so it can be emailed.
+		notifyObservers();
+	}
+	
 	public void addAttendee(PartyPeopleUser u){
 		attending.add(u);
 	}
