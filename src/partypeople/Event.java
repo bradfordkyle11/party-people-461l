@@ -8,7 +8,7 @@ import com.google.appengine.api.users.User;
 
 public class Event extends Observable {
 	private String name;
-	private User owner;
+	private PartyPeopleUser owner;
 	private List<PartyPeopleUser> attending;
 	private String location;
 	private Date date;
@@ -62,10 +62,10 @@ public class Event extends Observable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public User getOwner() {
+	public PartyPeopleUser getOwner() {
 		return owner;
 	}
-	public void setOwner(User owner) {
+	public void setOwner(PartyPeopleUser owner) {
 		this.owner = owner;
 	}
 	public List<PartyPeopleUser> getAttending() {
