@@ -1,0 +1,13 @@
+body {
+  min-height: 2000px;
+}
+
+.navbar-static-top {
+  margin-bottom: 19px;
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: 970px;
+  }
+}
