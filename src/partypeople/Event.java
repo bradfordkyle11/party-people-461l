@@ -6,7 +6,14 @@ import java.util.Observable;
 
 import com.google.appengine.api.users.User;
 
-public class Event extends Observable {
+public class Event extends Observable implements Comparable {
+	public static final int SOONEST_DATE = 0;
+	public static final int ALPHABETICAL = 1;
+	public static final int CLOSEST_DISTANCE = 2;
+	public static final int TIME_CREATED = 3;
+	public static final int PRICE = 4;
+	
+	private int sortType;
 	private String name;
 	private PartyPeopleUser owner;
 	private List<PartyPeopleUser> attending;
@@ -19,8 +26,29 @@ public class Event extends Observable {
 	private double price;
 	private List<String> itemsNeeded;
 	private String category;
+	private Date timeCreated;
 	//private Image picture;
 	
+	public Event(){
+		timeCreated = new Date();
+	}
+	
+	public int getSortType() {
+		return sortType;
+	}
+
+	public void setSortType(int sortType) {
+		this.sortType = sortType;
+	}
+
+	public Date getTimeCreated() {
+		return timeCreated;
+	}
+
+	public void setTimeCreated(Date timeCreated) {
+		this.timeCreated = timeCreated;
+	}
+
 	public void updateEvent(Event newEvent){
 		this.name = newEvent.getName();
 		this.owner = newEvent.getOwner();
@@ -127,6 +155,26 @@ public class Event extends Observable {
 	}
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		// TODO Auto-generated method stub
+		Event otherEvent = (Event) o;
+		switch (sortType){
+		case SOONEST_DATE:
+			return date.compareTo(otherEvent.getDate());
+		case ALPHABETICAL:
+			return name.compareTo(otherEvent.getName());
+		case CLOSEST_DISTANCE:
+			return 0;
+		case TIME_CREATED:
+			return timeCreated.compareTo(otherEvent.getTimeCreated());
+		case PRICE:
+			return Double.compare(price, otherEvent.getPrice());
+		default:
+			return 0;
+		}
 	}
 	
 	

@@ -1,5 +1,6 @@
 package partypeople;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -19,6 +20,12 @@ public class PartyPeopleUser implements Observer {
 	private User googleUser;
 	private List<Event> myAttending;
 	private List<Event> myCreated;
+	
+	public PartyPeopleUser(User googleUser){
+		this.googleUser = googleUser;
+		myAttending = new ArrayList<Event>();
+		myCreated = new ArrayList<Event>();
+	}
 
 	@Override
 	public void update(Observable event, Object ob) {
