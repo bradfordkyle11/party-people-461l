@@ -2,7 +2,7 @@ package partypeople;
 
 import java.util.Date;
 
-public class Comment implements Comparable {
+public class Comment implements Comparable<Comment> {
 	private String content;
 	private PartyPeopleUser commenter;
 	private Date timePosted;
@@ -14,10 +14,9 @@ public class Comment implements Comparable {
 	}
 
 	@Override
-	public int compareTo(Object o) {
+	public int compareTo(Comment o) {
 		//comments will just be sorted by time posted
-		Comment other = (Comment) o;
-		return timePosted.compareTo(other.getTimePosted());
+		return o.getTimePosted().compareTo(timePosted);
 	}
 
 	public String getContent() {
