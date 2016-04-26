@@ -51,4 +51,8 @@ public class PartyPeopleUser implements Observer {
 		}
 
 	}
+	
+	public String toString(){
+		return googleUser.getNickname();
+	}
 }

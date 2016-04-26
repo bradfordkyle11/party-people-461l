@@ -176,5 +176,46 @@ public class Event extends Observable implements Comparable<Event> {
 		}
 	}
 	
+	public String toString(){
+		String result = new String();
+		if (isPrivateEvent()){
+			if (name!=null){
+				result+=name + " ";
+			}
+			if (owner!=null){
+				result += owner.toString() + " ";
+			}
+			if (category!=null){
+				result += category + " ";
+			}
+		}
+		else{
+			if (name!=null){
+				result+=name + " ";
+			}
+			if (owner!=null){
+				result += owner.toString() + " ";
+			}
+			if (location!=null){
+				result += location + " ";
+			}
+			if (date!=null){
+				result += date.toString() + " ";
+			}
+			if (description!=null){
+				result += description + " ";
+			}
+			if (category!=null){
+				result += category + " ";
+			}
+
+		}
+		return result;
+	}
+	
+	public boolean equals(Event other){
+		return this.toString().equals(other.toString());
+	}
+	
 	
 }
