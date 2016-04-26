@@ -16,6 +16,9 @@
     <!-- Custom styles for this template -->
     <link href="stylesheets/navbar-static-top.css" rel="stylesheet">
 
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen"
+     href="http://tarruda.github.com/bootstrap-datetimepicker/assets/css/bootstrap-datetimepicker.min.css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -89,10 +92,59 @@
 	      <div class="col-md-4">
 	      <div class="well well-sm">
 	      	<h3>Filters</h3>
+	      	
+	      	<form role="form">
+	      		<h4>Categories:</h4>
+	      		<div class="checkbox">
+	      			<label><input type="checkbox" value="">Birthday</label>
+	      		</div>
+	      		<div class="checkbox">
+	      			<label><input type="checkbox" value="">Graduation</label>
+	      		</div>
+	      		<div class="checkbox">
+	      			<label><input type="checkbox" value="">Sports</label>
+	      		</div>
+	      		<div class="checkbox">
+	      			<label><input type="checkbox" value="">Holiday</label>
+	      		</div>
+	      		<div class="checkbox">
+	      			<label><input type="checkbox" value="">Social</label>
+	      		</div>
+	      		<div class="checkbox">
+	      			<label><input type="checkbox" value="">Music</label>
+	      		</div>
+	 			<div class="checkbox">
+	      			<label><input type="checkbox" value="">Pool Party</label>
+	      		</div>
+	      		<div class="checkbox">
+	      			<label><input type="checkbox" value="">Other</label>
+      			</div>
+      			<br>
+	      		<h4>Date:</h4>
+	      		<p>From:</p>
+				<div id="datetimepicker" class="input-append date">
+      				<input type="text"></input>
+      				<span class="add-on">
+        				<i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      				</span>
+    			</div>
+    			<p>To:</p>
+				<div id="datetimepicker2" class="input-append date">
+      				<input type="text"></input>
+      				<span class="add-on">
+        				<i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      				</span>
+    			</div>
+    			
+    			
+
+	      	</form>
 	      	</div>
 	      	
 	      </div>
 		</div>
+		
+		
     </div> <!-- /container -->
 
 
@@ -104,5 +156,29 @@
     <script src="../../dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+        <script type="text/javascript"
+     src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js">
+    </script> 
+    <script type="text/javascript"
+     src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js">
+    </script>
+    <script type="text/javascript"
+     src="http://tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.min.js">
+    </script>
+    <script type="text/javascript"
+     src="http://tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.pt-BR.js">
+    </script>
+    <script type="text/javascript">
+      $('#datetimepicker').datetimepicker({
+        format: 'MM/dd/yyyy hh:mm:ss',
+        language: 'en'
+      });
+    </script>
+    <script type="text/javascript">
+      $('#datetimepicker2').datetimepicker({
+        format: 'MM/dd/yyyy hh:mm:ss',
+        language: 'en'
+      });
+    </script>
   </body>
 </html>
