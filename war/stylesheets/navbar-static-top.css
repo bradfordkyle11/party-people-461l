@@ -1,9 +1,12 @@
 body {
-  min-height: 2000px;
+
 }
 
 .navbar-static-top {
   margin-bottom: 19px;
+}
+.input-daterange.input-group{
+	margin-bottom: 10px;
 }
 
 @media (min-width: 1200px) {
