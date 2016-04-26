@@ -6,7 +6,7 @@ import java.util.Observable;
 
 import com.google.appengine.api.users.User;
 
-public class Event extends Observable implements Comparable {
+public class Event extends Observable implements Comparable<Event> {
 	public static final int SOONEST_DATE = 0;
 	public static final int ALPHABETICAL = 1;
 	public static final int CLOSEST_DISTANCE = 2;
@@ -158,20 +158,19 @@ public class Event extends Observable implements Comparable {
 	}
 
 	@Override
-	public int compareTo(Object o) {
+	public int compareTo(Event e) {
 		// TODO Auto-generated method stub
-		Event otherEvent = (Event) o;
 		switch (sortType){
 		case SOONEST_DATE:
-			return date.compareTo(otherEvent.getDate());
+			return date.compareTo(e.getDate());
 		case ALPHABETICAL:
-			return name.compareTo(otherEvent.getName());
+			return name.compareTo(e.getName());
 		case CLOSEST_DISTANCE:
 			return 0;
 		case TIME_CREATED:
-			return timeCreated.compareTo(otherEvent.getTimeCreated());
+			return timeCreated.compareTo(e.getTimeCreated());
 		case PRICE:
-			return Double.compare(price, otherEvent.getPrice());
+			return Double.compare(price, e.getPrice());
 		default:
 			return 0;
 		}
