@@ -8,7 +8,7 @@ public class Filter {
 	private List<FilterBehavior> filterBehaviors;
 
 	// this behavior will just reorder events
-	private FilterBehavior sortingBehavior;
+//	private FilterBehavior sortingBehavior;
 
 	public Filter() {
 		filterBehaviors = new ArrayList<FilterBehavior>();
@@ -27,10 +27,10 @@ public class Filter {
 		for (FilterBehavior filterBehavior : filterBehaviors) {
 			filteredEvents = filterBehavior.apply(filteredEvents);
 		}
-		filteredEvents = sortingBehavior.apply(filteredEvents);
+//		filteredEvents = sortingBehavior.apply(filteredEvents);
 		return filteredEvents;
 	}
-
+/*
 	public FilterBehavior getSortingBehavior() {
 		return sortingBehavior;
 	}
@@ -38,5 +38,5 @@ public class Filter {
 	public void setSortingBehavior(FilterBehavior sortingBehavior) {
 		this.sortingBehavior = sortingBehavior;
 	}
-
+*/
 }
