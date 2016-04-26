@@ -1,14 +1,14 @@
-package partypeople;
+	package partypeople;
 
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CategoryFilterBehaviorTest {
+public class FilterTest {
+
 	ArrayList<String> categories = new ArrayList<String>();
 	ArrayList<Event> events = new ArrayList<Event>();
 	@Before
@@ -68,39 +68,10 @@ public class CategoryFilterBehaviorTest {
 		
 	}
 	
-	@Test
-	public void singleCategoryTest() {
-		categories.add("a");
-		CategoryFilterBehavior a = new CategoryFilterBehavior(categories);
-		assertEquals(16, events.size());
-		events = (ArrayList<Event>) a.apply(events);
-		for (int i = 0; i < events.size(); i++) {
-			assertTrue(events.get(i).getCategory() == "a");
-		}
-	}
 	
 	@Test
-	public void multipleCategoryTest() {
-		categories.add("d");
-		categories.add("b");
-		CategoryFilterBehavior a = new CategoryFilterBehavior(categories);
-		assertEquals(16, events.size());
-		events = (ArrayList<Event>) a.apply(events);
-		for (int i = 0; i < events.size(); i++) {
-			assertTrue(events.get(i).getCategory() == "b" || events.get(i).getCategory() == "d");
-		}
-		categories.remove("b");
-		a = new CategoryFilterBehavior(categories);
-		events = (ArrayList<Event>) a.apply(events);
-		for (int i = 0; i < events.size(); i++) {
-			assertTrue(events.get(i).getCategory() == "d");
-		}
+	public void testApply() {
+		fail("Not yet implemented");
 	}
-	
-	@After
-	public void clean() {
-		events.clear();
-		categories.clear();
-	}
-	
+
 }
