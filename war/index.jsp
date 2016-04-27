@@ -31,7 +31,7 @@
   <body>
 
     <!-- Static navbar -->
-    <nav class="navbar navbar-default navbar-static-top">
+    <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -69,7 +69,7 @@
 		%>
 		<div class="row">
 			<div class="col-sm-8">
-				<a class="btn btn-primary" href="#" role="button">Create New Party Event</a>
+				<a class="btn btn-primary" href="/new-party-event.jsp" role="button">Create New Party Event</a>
 			</div>
 			<div class="col-sm-4">
 				<form role="form">
@@ -169,5 +169,7 @@
         todayHighlight: true
     });
     </script>
+
+
   </body>
 </html>
