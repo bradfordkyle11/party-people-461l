@@ -54,7 +54,7 @@
     
     <div class="container">
     	<h1>Create a new party event:</h1>
-    	<form id="new-party" role="form" action="#" onsubmit="return validateForm()" method="post">
+    	<form id="new-party" role="form" action="new-party" method="post">
     		<div id="party-name-form-group" class="form-group">
     			<label class="control-label" for="party-name">Party name:</label>
     			<input type="text" class="form-control" id="party-name" name="party-name" placeholder="Enter the name of the party">

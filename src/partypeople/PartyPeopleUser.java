@@ -15,19 +15,30 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.google.appengine.api.users.User;
+import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
 
-public class PartyPeopleUser implements Observer {
+@Entity
+public class PartyPeopleUser {
 	private User googleUser;
-	private List<Event> myAttending;
-	private List<Event> myCreated;
+	private List<Ref<Event>> myAttending;
+	private List<Ref<Event>> myCreated;
+	@Id Long id;
 	
 	public PartyPeopleUser(User googleUser){
 		this.googleUser = googleUser;
-		myAttending = new ArrayList<Event>();
-		myCreated = new ArrayList<Event>();
+		myAttending = new ArrayList<Ref<Event>>();
+		myCreated = new ArrayList<Ref<Event>>();
+	}
+	
+	public PartyPeopleUser(){
+		this.googleUser = new User("default@email.com", "gmail.com");
+		myAttending = new ArrayList<Ref<Event>>();
+		myCreated = new ArrayList<Ref<Event>>();
 	}
 
-	@Override
+/*	@Override
 	public void update(Observable event, Object ob) {
 		Event ev = (Event) event;
 		ArrayList<String> changed = (ArrayList<String>) ob;
@@ -56,8 +67,24 @@ public class PartyPeopleUser implements Observer {
 		}
 
 	}
+	*/
 	
 	public String toString(){
 		return googleUser.getNickname();
+	}
+
+	public User getGoogleUser() {
+		return googleUser;
+	}
+
+	public void setGoogleUser(User googleUser) {
+		this.googleUser = googleUser;
+	}
+	
+	public void addCreated(Event event){
+		myCreated.add(Ref.create(event));
+	}
+	public void addAttending(Event event){
+		myAttending.add(Ref.create(event));
 	}
 }

@@ -26,7 +26,7 @@ public class ObserverTest {
 	ArrayList<Event> events = new ArrayList<Event>();
 	PartyPeopleUser c = new PartyPeopleUser(new User("test3@gmail.com", "gmail.com"));
 	
-	@Before
+/*	@Before
 	public void setUp() {
 		TestUser a = new TestUser(new User("test@gmail.com", "gmail.com"));
 		TestUser b = new TestUser(new User("test2@gmail.com", "gmail.com"));
@@ -135,6 +135,6 @@ public class ObserverTest {
 			}
 		
 
-	}
+	} */
 
 }

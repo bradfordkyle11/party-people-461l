@@ -1,3 +1,14 @@
+<%@ page import="com.google.appengine.api.users.User" %>
+<%@ page import="com.google.appengine.api.users.UserService" %>
+<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
+<%@ page import="com.googlecode.objectify.ObjectifyService"%>
+<%@ page import="static com.googlecode.objectify.ObjectifyService.ofy" %>
+<%@ page import="com.googlecode.objectify.Objectify" %>
+<%@ page import="java.util.List" %>
+<%@ page import="partypeople.PartyPeopleUser" %>
+<%@ page import="partypeople.StorageHandler" %>
+<%@ page import="partypeople.Event" %>
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -29,7 +40,14 @@
   </head>
 
   <body>
-
+	<%
+	//get current user
+		UserService userService = UserServiceFactory.getUserService();
+    	User user = userService.getCurrentUser();
+    	if (user!=null){
+    		pageContext.setAttribute("user", user);
+    	}
+    %>
     <!-- Static navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -47,7 +65,22 @@
             <li class="active"><a href="#">Home</a></li>
             <li><a href="#about">My Account</a></li>
             <li><a href="#contact">About</a></li>
-            <li><a href="#logout">Logout</a>
+            
+            <%
+            if (user!=null) {
+            	PartyPeopleUser partyPeopleUser = StorageHandler.getUser(user);
+            	if (partyPeopleUser==null){
+            		partyPeopleUser = new PartyPeopleUser(user);
+            		StorageHandler.save(partyPeopleUser);
+            	}
+            %>
+            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout</a>
+            <%} else {
+            %>
+            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login</a>
+            <%
+            }
+            %>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -69,7 +102,13 @@
 		%>
 		<div class="row">
 			<div class="col-sm-8">
+				<%
+				if (user!=null){
+				%>
 				<a class="btn btn-primary" href="/new-party-event.jsp" role="button">Create New Party Event</a>
+				<%
+				}
+				%>
 			</div>
 			<div class="col-sm-4">
 				<form role="form">
@@ -80,11 +119,44 @@
 		</div>
 	</div>
     
+
+    
+    
     <div class="container">
     	<h1>Upcoming Parties:</h1>
 	   	<div class="row">
 	
 	      <div class="col-md-8">
+          <%
+			   //load and display events
+	   		List<Event> events = StorageHandler.loadEvents();
+	   		if (events.isEmpty()){
+	    	%>
+	    	<p>There are no upcoming events.</p>
+	    	<%
+	    	} else {
+	    		for (Event event : events){
+	    			pageContext.setAttribute("party_name", event.getName());
+	    			pageContext.setAttribute("description", event.getDescription());
+	    			pageContext.setAttribute("category", event.getCategory());
+	    			//pageContext.setAttribute("date", event.getDate().toString());
+	    			pageContext.setAttribute("location", "At " + event.getLocation());
+	    			pageContext.setAttribute("price", String.valueOf(event.getPrice()));
+	    	    	%>
+	    	    	<div class="well well-sm">
+			        <h2>${party_name}</h2>
+			        <p>${category}</p>
+			        <p>${location}</p>
+			        <p>${description}</p>
+			        <p>
+			          <a class="btn btn-primary" href="#" role="button">RSVP &raquo;</a>
+			        </p>
+			      	</div>
+	    	    	<%
+	    		}
+
+	    	}
+	    	%>
 	      <!-- Main component for a primary marketing message or call to action -->
 		      <div class="well well-sm">
 		        <h2>Party 1</h2>
