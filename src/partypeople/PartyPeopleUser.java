@@ -43,7 +43,7 @@ public class PartyPeopleUser {
 		Event ev = (Event) event;
 		ArrayList<String> changed = (ArrayList<String>) ob;
 		String msgBody = "The event " + changed.get(0)
-				+ " has been changed. The following item(s) have changed:\r\n";
+				+ " has been changed. The following item(s) changed:\r\n";
 		for (int i = 1; i < changed.size(); i++) {
 			msgBody += changed.get(i) + "\r\n";
 		}
