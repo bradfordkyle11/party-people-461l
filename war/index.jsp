@@ -1,13 +1,12 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.googlecode.objectify.ObjectifyService"%>
-<%@ page import="static com.googlecode.objectify.ObjectifyService.ofy" %>
-<%@ page import="com.googlecode.objectify.Objectify" %>
 <%@ page import="java.util.List" %>
 <%@ page import="partypeople.PartyPeopleUser" %>
 <%@ page import="partypeople.StorageHandler" %>
 <%@ page import="partypeople.Event" %>
+<%@ page import="partypeople.EventBrowser" %>
+<%@ page import="partypeople.Filter" %>
 
 <html lang="en">
   <head>
@@ -64,7 +63,7 @@
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
             <li><a href="/my-account.jsp">My Account</a></li>
-            <li><a href="#contact">About</a></li>
+            <li><a href="#about">About</a></li>
             
             <%
             if (user!=null) {
@@ -128,8 +127,14 @@
 	
 	      <div class="col-md-8">
           <%
-			   //load and display events
-	   		List<Event> events = StorageHandler.loadEvents();
+			//load and display events
+			EventBrowser browser;
+			if (request.getAttribute("filter")!=null){
+				browser = new EventBrowser((Filter) request.getAttribute("filter"));
+			} else {
+				browser = new EventBrowser();
+			}
+	   		List<Event> events = browser.getEvents();
 	   		if (events.isEmpty()){
 	    	%>
 	    	<p>There are no upcoming events.</p>
@@ -140,18 +145,24 @@
 	    			pageContext.setAttribute("description", event.getDescription());
 	    			pageContext.setAttribute("category", event.getCategory());
 	    			//pageContext.setAttribute("date", event.getDate().toString());
-	    			pageContext.setAttribute("location", "At " + event.getLocation());
+	    			pageContext.setAttribute("location", event.getLocation());
 	    			pageContext.setAttribute("price", String.valueOf(event.getPrice()));
+	    			pageContext.setAttribute("id", event.getId().toString());
 	    	    	%>
+	    	    	<form role="form" method="post" action="party-page">
+	    	    	<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>
+	    	    	
 	    	    	<div class="well well-sm">
-			        <h2>${party_name}</h2>
+			        <h2><a href="#" onclick="$(this).closest('form').submit()">${party_name}</a></h2>
 			        <p>${category}</p>
 			        <p>${location}</p>
 			        <p>${description}</p>
+			        
 			        <p>
 			          <a class="btn btn-primary" href="#" role="button">RSVP &raquo;</a>
 			        </p>
 			      	</div>
+			      	</form>
 	    	    	<%
 	    		}
 

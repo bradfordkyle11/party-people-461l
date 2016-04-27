@@ -29,7 +29,7 @@ public class Event implements Comparable<Event> {
 	private String name = "";
 	@Embedded
 	private Ref<PartyPeopleUser> owner;
-	private List<PartyPeopleUser> attending;
+	private List<Ref<PartyPeopleUser>> attending;
 	private String location = "";
 	private Date date;
 	private String description = "";
@@ -149,7 +149,7 @@ public class Event implements Comparable<Event> {
 	}
 
 	public void addAttendee(PartyPeopleUser u) {
-		attending.add(u);
+		attending.add(Ref.create(u));
 //		addObserver(u);
 	}
 
@@ -182,11 +182,11 @@ public class Event implements Comparable<Event> {
 		this.owner = Ref.create(owner);
 	}
 
-	public List<PartyPeopleUser> getAttending() {
+	public List<Ref<PartyPeopleUser>> getAttending() {
 		return attending;
 	}
 
-	public void setAttending(List<PartyPeopleUser> attending) {
+	public void setAttending(List<Ref<PartyPeopleUser>> attending) {
 		this.attending = attending;
 	}
 
@@ -279,6 +279,10 @@ public class Event implements Comparable<Event> {
 		default:
 			return 0;
 		}
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String toString() {

@@ -37,4 +37,8 @@ public class StorageHandler {
 		List<Event> result = ObjectifyService.ofy().load().type(Event.class).list();
 		return result;
 	}
+	
+	public static Event findEventById(long id){
+		return ObjectifyService.ofy().load().type(Event.class).id(id).getValue();
+	}
 }

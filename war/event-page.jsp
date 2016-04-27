@@ -83,69 +83,42 @@
     </nav>
     
     <div class="container">
-    	<h1>Create a new party event:</h1>
-    	<form id="new-party" role="form" action="new-party" method="post">
-    		<div id="party-name-form-group" class="form-group">
+    	<%
+    		if (request.getAttribute("event")!=null){
+    			pageContext.setAttribute("event", request.getAttribute("event"));
+    		}
+    	%>
+    		<div>
     			<label class="control-label" for="party-name">Party name:</label>
-    			<input type="text" class="form-control" id="party-name" name="party-name" placeholder="Enter the name of the party">
+				<p name="party-name"><%=((Event)request.getAttribute("event")).getName()%></p>
     		</div>
-    		<div class="form-group">
+    		<div>
     			<label class="control-label" for="description">Description:</label>
-	      	  	<textarea class="form-control" name="description" placeholder="Enter description" rows="3"></textarea>
+	      	  	<p name="description"><%=((Event)request.getAttribute("event")).getDescription()%></p>
     		</div>
-    		<div class="form-group">
+    		<div>
     			<label class="control-label" for="category">Category:</label>
-    			<select class="form-control" name="category" placeholder="Select category">
-    				<option>Birthday</option>
-    				<option>Graduation</option>
-    				<option>Sports</option>
-    				<option>Holiday</option>
-    				<option>Social</option>
-    				<option>Music</option>
-    				<option>Pool Party</option>
-    				<option>Other</option>
-    			</select>
+    			<p name="category"><%=((Event)request.getAttribute("event")).getCategory()%></p>
     		</div>
-    		<div class="form-group">
-    			<label class="control-label" for ="date">Date:</label>
-    			<div class="input-group date" data-provide="datepicker" id="datepicker">
-					<input name="date" type="text" class="form-control" placeholder="Enter date"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-				</div>
-    		</div>
-    		<div class="form-group">
-    			<label class="control-label" for="time">Time:</label>
-    			<input type="time" class="form-control" name="time" placeholder="Enter time">
-    		</div>
-    		<div class="form-group">
+			<%
+			if (((Event)request.getAttribute("event")).getDate()!=null){
+				%>
+				<div>
+    				<label class="control-label" for="date-and-time">Date and time:</label>
+    				<p name="date-and-time"><%=((Event)request.getAttribute("event")).getDate().toString()%></p>
+    			</div>
+				<%
+			}
+			%>
+    		<div>
     			<label class="control-label" for="location">Location:</label>
-    			<input type="text" class="form-control" name="location" placeholder="Enter location">
+    			<p name="location"><%=((Event)request.getAttribute("event")).getLocation()%></p>
     		</div>
-    		<div class="form-group">
-    			<label class="control-label" for="public-or-private">Public or private:</label>
-    			<select class="form-control" id="public-or-private" name="public-or-private">
-    				<option id="public">Public</option>
-    				<option id="private">Private</option>
-    			</select>
-    		</div>
-    		<div id="password-form-group" class="form-group">
-    			<label class="control-label" for="password">Password:</label>
-    			<input type="password" class="form-control" name="password" placeholder="Enter password" disabled>
-    		</div>
-    		<div id="password-confirmation-form-group" class="form-group">
-    			<label class="control-label" for="password-confirmation">Confirm password:</label>
-    			<input type="password" class="form-control" name="password-confirmation" placeholder="Confirm password" disabled>
-    		</div>
-    		<div class="form-group">
+    		<div>
     			<label class="control-label" for="price">Price:</label>
-    			<input type="number" class="form-control" name="price" placeholder="Enter price">
+				<p name="price"><%=String.valueOf(((Event)request.getAttribute("event")).getPrice())%></p>
     		</div>
-    		<div class="form-group">
-    			<label class="control-label" for="items-needed">Items needed:</label>
-    			<textarea class="form-control" name="items-needed" rows="3" placeholder="Enter items needed separated by commas"></textarea>
-    		</div>
-    		<button type="submit" class="btn btn-primary">Create party</button>
     		
-    	</form>
 	   	
 	      	
 	      </div>

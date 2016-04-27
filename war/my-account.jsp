@@ -1,3 +1,11 @@
+<%@ page import="com.google.appengine.api.users.User" %>
+<%@ page import="com.google.appengine.api.users.UserService" %>
+<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
+<%@ page import="java.util.List" %>
+<%@ page import="partypeople.PartyPeopleUser" %>
+<%@ page import="partypeople.StorageHandler" %>
+<%@ page import="partypeople.Event" %>
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -27,9 +35,14 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-
-  <body>
-
+	<%
+	//get current user
+		UserService userService = UserServiceFactory.getUserService();
+    	User user = userService.getCurrentUser();
+    	if (user!=null){
+    		pageContext.setAttribute("user", user);
+    	}
+    %>
     <!-- Static navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -45,9 +58,24 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="/index.jsp">Home</a></li>
-            <li class="active"><a href="my-account.jsp">My Account</a></li>
-            <li><a href="#contact">About</a></li>
-            <li><a href="#logout">Logout</a>
+            <li class="active"><a href="/my-account.jsp">My Account</a></li>
+            <li><a href="#about">About</a></li>
+            
+            <%
+            if (user!=null) {
+            	PartyPeopleUser partyPeopleUser = StorageHandler.getUser(user);
+            	if (partyPeopleUser==null){
+            		partyPeopleUser = new PartyPeopleUser(user);
+            		StorageHandler.save(partyPeopleUser);
+            	}
+            %>
+            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout</a>
+            <%} else {
+            %>
+            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login</a>
+            <%
+            }
+            %>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

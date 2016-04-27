@@ -23,6 +23,9 @@ public class Filter {
 	}
 
 	public List<Event> apply(List<Event> events) {
+		if (filterBehaviors.size()==0){
+			return events;
+		}
 		List<Event> filteredEvents = new ArrayList<Event>(events);
 		for (FilterBehavior filterBehavior : filterBehaviors) {
 			filteredEvents = filterBehavior.apply(filteredEvents);
