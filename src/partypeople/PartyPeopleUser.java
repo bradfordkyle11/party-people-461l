@@ -30,8 +30,13 @@ public class PartyPeopleUser implements Observer {
 	@Override
 	public void update(Observable event, Object ob) {
 		Event ev = (Event) event;
-		String msgBody = "The event " + ev.getName()
-				+ " has been changed, view change at <link to event>";
+		ArrayList<String> changed = (ArrayList<String>) ob;
+		String msgBody = "The event " + changed.get(0)
+				+ " has been changed. The following item(s) have changed:\r\n";
+		for (int i = 1; i < changed.size(); i++) {
+			msgBody += changed.get(i) + "\r\n";
+		}
+		msgBody += "View changes at <link to event>";
 		try {
 			Properties props = new Properties();
 			Session session = Session.getDefaultInstance(props, null);

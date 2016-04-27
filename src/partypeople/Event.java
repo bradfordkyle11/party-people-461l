@@ -1,5 +1,6 @@
 package partypeople;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
@@ -49,31 +50,63 @@ public class Event extends Observable implements Comparable<Event> {
 		this.timeCreated = timeCreated;
 	}
 
+
 	public void updateEvent(Event newEvent){
-		this.name = newEvent.getName();
-		this.owner = newEvent.getOwner();
-		this.attending = newEvent.getAttending();
-		this.location = newEvent.getLocation();
-		this.date = newEvent.getDate();
+		ArrayList<String> changed = new ArrayList<String>();
+		boolean hasChanged = false;
+		changed.add(this.name);
+		if (!this.name.equals(newEvent.getName()) && !(newEvent.getName()== null)) {
+			changed.add("Event Name");
+			this.name = newEvent.getName();
+			hasChanged = true;
+		}
+		if (!this.owner.equals(newEvent.getOwner()) && !(newEvent.getOwner() == null)) {
+			changed.add("Host");
+			this.owner = newEvent.getOwner();
+			hasChanged = true;
+		}
+		if (!this.location.equals(newEvent.getLocation()) && !(newEvent.getLocation() == null)) {
+			changed.add("Location");
+			this.location = newEvent.getLocation();
+			hasChanged = true;
+		}
+		if (!this.date.equals(newEvent.getDate()) && !(newEvent.getDate() == null)) {
+			changed.add("Date");
+			this.date = newEvent.getDate();
+			hasChanged = true;
+		}
+		if (this.price != newEvent.getPrice() ) {
+			changed.add("Price");
+			this.price = newEvent.getPrice();
+			hasChanged = true;
+		}
 		this.description = newEvent.getDescription();
 		this.comments = newEvent.getComments();
 		this.privateEvent = newEvent.isPrivateEvent();
 		this.password = newEvent.getPassword();
-		this.price = newEvent.getPrice();
 		this.itemsNeeded = newEvent.getItemsNeeded();
 		this.category = newEvent.getCategory();
+		this.attending = newEvent.getAttending();
+		
+		if (hasChanged) {
+			setChanged();
+		}
 		
 		//figure out what changed and turn it into a string to 
 		//pass to the observers, so it can be emailed.
-		notifyObservers();
+		notifyObservers(changed);
+		clearChanged();
+		
 	}
 	
 	public void addAttendee(PartyPeopleUser u){
 		attending.add(u);
+		addObserver(u);
 	}
 	
 	public void removeAttendee(PartyPeopleUser u){
 		attending.remove(u);
+		deleteObserver(u);
 	}
 	
 	public void addComment(String content, PartyPeopleUser commenter){
