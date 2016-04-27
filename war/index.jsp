@@ -45,7 +45,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">My Account</a></li>
+            <li><a href="/my-account.jsp">My Account</a></li>
             <li><a href="#contact">About</a></li>
             <li><a href="#logout">Logout</a>
           </ul>
