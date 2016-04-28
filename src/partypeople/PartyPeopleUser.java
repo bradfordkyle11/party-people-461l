@@ -18,12 +18,13 @@ import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Load;
 
 @Entity
 public class PartyPeopleUser {
 	private User googleUser;
-	private List<Ref<Event>> myAttending;
-	private List<Ref<Event>> myCreated;
+	@Load private List<Ref<Event>> myAttending;
+	@Load private List<Ref<Event>> myCreated;
 	@Id Long id;
 	
 	public PartyPeopleUser(User googleUser){
@@ -33,7 +34,7 @@ public class PartyPeopleUser {
 	}
 	
 	public PartyPeopleUser(){
-		this.googleUser = new User("default@email.com", "gmail.com");
+		this.googleUser = new User("guest", "gmail.com");
 		myAttending = new ArrayList<Ref<Event>>();
 		myCreated = new ArrayList<Ref<Event>>();
 	}
@@ -69,6 +70,10 @@ public class PartyPeopleUser {
 	}
 	*/
 	
+	public Long getId() {
+		return id;
+	}
+
 	public String toString(){
 		return googleUser.getNickname();
 	}
@@ -86,5 +91,8 @@ public class PartyPeopleUser {
 	}
 	public void addAttending(Event event){
 		myAttending.add(Ref.create(event));
+	}
+	public boolean equals(PartyPeopleUser other){
+		return this.googleUser.getEmail().equals(other.getGoogleUser().getEmail());
 	}
 }

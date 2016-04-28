@@ -16,6 +16,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Load;
 
 @Entity
 public class Event implements Comparable<Event> {
@@ -28,8 +29,8 @@ public class Event implements Comparable<Event> {
 	private int sortType;
 	private String name = "";
 	@Embedded
-	private Ref<PartyPeopleUser> owner;
-	private List<Ref<PartyPeopleUser>> attending;
+	@Load private Ref<PartyPeopleUser> owner;
+	@Load private List<Ref<PartyPeopleUser>> attending;
 	private String location = "";
 	private Date date;
 	private String description = "";
@@ -40,8 +41,9 @@ public class Event implements Comparable<Event> {
 	private List<String> itemsNeeded;
 	private String category = "";
 	private Date timeCreated;
-	
-	@Id Long id;
+
+	@Id
+	Long id;
 
 	// private Image picture;
 
@@ -49,14 +51,15 @@ public class Event implements Comparable<Event> {
 		timeCreated = new Date();
 	}
 
-	public Event(PartyPeopleUser owner, String name, String description, String category,
-			String date, String time, String location, String publicOrPrivate,
-			String password, String price, String itemsNeeded) {
+	public Event(PartyPeopleUser owner, String name, String description,
+			String category, String date, String time, String location,
+			String publicOrPrivate, String password, String price,
+			String itemsNeeded) {
 		this.owner = Ref.create(owner);
 		this.name = name;
 		this.description = description;
 		this.category = category;
-		if (date!=null){
+		if (date != null) {
 			DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 			try {
 				this.date = dateFormat.parse(date);
@@ -64,20 +67,26 @@ public class Event implements Comparable<Event> {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//need to set the time
+			// need to set the time
 		}
 
-
 		this.location = location;
-		if (publicOrPrivate!=null){
+		if (publicOrPrivate != null) {
 			this.privateEvent = publicOrPrivate.equals("private");
 		}
 		this.password = password;
-		
-		if(!price.equals("")){
+
+		if (!price.equals("")) {
 			this.price = Double.parseDouble(price);
 		}
-		this.itemsNeeded = new ArrayList<String>(Arrays.asList(itemsNeeded.split(",")));
+		this.itemsNeeded = new ArrayList<String>(Arrays.asList(itemsNeeded
+				.split(",")));
+		while (this.itemsNeeded.contains("")){
+			this.itemsNeeded.remove("");
+		}
+
+		this.attending = new ArrayList<Ref<PartyPeopleUser>>();
+		this.comments = new ArrayList<Comment>();
 	}
 
 	public int getSortType() {
@@ -135,30 +144,42 @@ public class Event implements Comparable<Event> {
 		this.password = newEvent.getPassword();
 		this.itemsNeeded = newEvent.getItemsNeeded();
 		this.category = newEvent.getCategory();
-		this.attending = newEvent.getAttending();
+
+		this.attending.clear();
+		List<PartyPeopleUser> attendees = newEvent.getAttending();
+		for (PartyPeopleUser attendee : attendees) {
+			this.attending.add(Ref.create(attendee));
+		}
 
 		if (hasChanged) {
-//			setChanged();
+			// setChanged();
 		}
 
 		// figure out what changed and turn it into a string to
 		// pass to the observers, so it can be emailed.
-//		notifyObservers(changed);
-//		clearChanged();
+		// notifyObservers(changed);
+		// clearChanged();
 
 	}
 
 	public void addAttendee(PartyPeopleUser u) {
-		attending.add(Ref.create(u));
-//		addObserver(u);
+		if (attending==null){
+			attending = new ArrayList<Ref<PartyPeopleUser>>();
+		}
+		Ref<PartyPeopleUser> attendee = Ref.create(u);
+		attending.add(attendee);
+		// addObserver(u);
 	}
 
 	public void removeAttendee(PartyPeopleUser u) {
-		attending.remove(u);
-//		deleteObserver(u);
+		attending.remove(Ref.create(u));
+		// deleteObserver(u);
 	}
 
 	public void addComment(String content, PartyPeopleUser commenter) {
+		if (comments==null){
+			comments = new ArrayList<Comment>();
+		}
 		comments.add(new Comment(content, commenter));
 	}
 
@@ -182,8 +203,14 @@ public class Event implements Comparable<Event> {
 		this.owner = Ref.create(owner);
 	}
 
-	public List<Ref<PartyPeopleUser>> getAttending() {
-		return attending;
+	public List<PartyPeopleUser> getAttending() {
+		ArrayList<PartyPeopleUser> attendees = new ArrayList<PartyPeopleUser>();
+		if (attending != null) {
+			for (Ref<PartyPeopleUser> attendee : attending) {
+				attendees.add(attendee.safeGet());
+			}
+		}
+		return attendees;
 	}
 
 	public void setAttending(List<Ref<PartyPeopleUser>> attending) {
@@ -215,6 +242,9 @@ public class Event implements Comparable<Event> {
 	}
 
 	public List<Comment> getComments() {
+		if (comments==null){
+			comments = new ArrayList<Comment>();
+		}
 		return comments;
 	}
 
@@ -247,6 +277,9 @@ public class Event implements Comparable<Event> {
 	}
 
 	public List<String> getItemsNeeded() {
+		if (itemsNeeded==null){
+			itemsNeeded = new ArrayList<String>();
+		}
 		return itemsNeeded;
 	}
 
@@ -260,6 +293,14 @@ public class Event implements Comparable<Event> {
 
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	
+	public boolean isAttending(PartyPeopleUser attendee){
+		List<PartyPeopleUser> attending = getAttending();
+		for (PartyPeopleUser att : attending){
+			String email = att.getGoogleUser().getEmail();
+		}
+		return attending.contains(attendee);
 	}
 
 	@Override

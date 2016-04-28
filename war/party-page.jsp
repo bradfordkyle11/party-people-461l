@@ -18,9 +18,6 @@
 
     <title>Party People</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="stylesheets/navbar-static-top.css" rel="stylesheet">
     
@@ -63,8 +60,9 @@
             <li><a href="#about">About</a></li>
             
             <%
+            PartyPeopleUser partyPeopleUser = new PartyPeopleUser();
             if (user!=null) {
-            	PartyPeopleUser partyPeopleUser = StorageHandler.getUser(user);
+            	partyPeopleUser = StorageHandler.getUser(user);
             	if (partyPeopleUser==null){
             		partyPeopleUser = new PartyPeopleUser(user);
             		StorageHandler.save(partyPeopleUser);
@@ -82,43 +80,111 @@
       </div>
     </nav>
     
-    <div class="container">
+   	<%
+	if (request.getAttribute("event")!=null){
+		pageContext.setAttribute("event", request.getAttribute("event"));
+	}
+	else {
+		response.sendRedirect("/index.jsp");
+	}
+ 	%>
+ 	<div class="container">
+ 	<h1><%=((Event)request.getAttribute("event")).getName()%></h1>
+   		
+   		
+   					        <!-- Button for RSVPing or deciding not to come -->
+    <form role="form" method="post" action="rsvp">
+   		<input type="hidden" value="<%=String.valueOf(((Event)request.getAttribute("event")).getId())%>" name="event-id"/>			        
     	<%
-    		if (request.getAttribute("event")!=null){
-    			pageContext.setAttribute("event", request.getAttribute("event"));
-    		}
-    	%>
+    	if(((Event)pageContext.getAttribute("event")).isAttending(partyPeopleUser)){
+    		%>
+    		<input type="hidden" value="false" name="rsvp?"/>
+   			<button class="btn btn-primary" type="submit">I can't make it</button>
+    		<%
+    	} else {
+    		%>
+    		<input type="hidden" value="true" name="rsvp?"/>
+    		<button class="btn btn-primary" type="submit">RSVP &raquo;</button>
+    		<%
+    	}
+   		%>
+   	</form>
+   	</div> <!-- /container -->
+   	
+    <div class="container">
+
+    	<div class="row">
+    		<div class="col-md-8">
+    		<div class="well well-sm">
+    		<h4>Details</h4>
     		<div>
-    			<label class="control-label" for="party-name">Party name:</label>
-				<p name="party-name"><%=((Event)request.getAttribute("event")).getName()%></p>
+	      	  	<p name="description"><%="Description: " + ((Event)request.getAttribute("event")).getDescription()%></p>
     		</div>
     		<div>
-    			<label class="control-label" for="description">Description:</label>
-	      	  	<p name="description"><%=((Event)request.getAttribute("event")).getDescription()%></p>
-    		</div>
-    		<div>
-    			<label class="control-label" for="category">Category:</label>
-    			<p name="category"><%=((Event)request.getAttribute("event")).getCategory()%></p>
+    			<p name="category"><%="Category: " + ((Event)request.getAttribute("event")).getCategory()%></p>
     		</div>
 			<%
 			if (((Event)request.getAttribute("event")).getDate()!=null){
 				%>
 				<div>
-    				<label class="control-label" for="date-and-time">Date and time:</label>
-    				<p name="date-and-time"><%=((Event)request.getAttribute("event")).getDate().toString()%></p>
+    				<p name="date-and-time"><%="Date and Time: " + ((Event)request.getAttribute("event")).getDate().toString()%></p>
     			</div>
 				<%
 			}
 			%>
     		<div>
-    			<label class="control-label" for="location">Location:</label>
-    			<p name="location"><%=((Event)request.getAttribute("event")).getLocation()%></p>
+    			<p name="location"><%="Location: " + ((Event)request.getAttribute("event")).getLocation()%></p>
     		</div>
     		<div>
-    			<label class="control-label" for="price">Price:</label>
-				<p name="price"><%=String.valueOf(((Event)request.getAttribute("event")).getPrice())%></p>
+				<p name="price"><%="Price: " + String.valueOf(((Event)request.getAttribute("event")).getPrice())%></p>
     		</div>
+    		<div>
+    		<p>Attendees:</p>
+    		<%
+    			if (((Event)request.getAttribute("event")).getAttending().isEmpty()){
+    				%>
+    				<p>none</p>    				
+    				<%
+
+    			}
+    			for (PartyPeopleUser attendee : ((Event)request.getAttribute("event")).getAttending()){
+    				pageContext.setAttribute("attendee", attendee.toString());
+    				%>
+    				<p>${attendee}</p>
+    				<%
+    			}
+    		%>
+    		</div>
+    		</div> <!-- /well well-sm -->
+    		</div> <!-- /col-md-8 -->
+    		<div class="col-md-4">
+    		<%
+    		if (!((Event)pageContext.getAttribute("event")).getItemsNeeded().isEmpty()){
+    			
     		
+    		%>
+    			<div class="well well-sm">
+    				<form role="form" method="post" action="#">
+	    				<h4>Items needed:</h4>
+	    				<%
+	    				for (String neededItem : ((Event)pageContext.getAttribute("event")).getItemsNeeded()){
+	    					%>
+	    					<div class="checkbox">
+		      					<label><input type="checkbox" value="" name="<%=neededItem%>"><%=neededItem%></label>
+		      				</div>
+	    					<%
+	    				}
+	    				%>
+	    				<button class="btn btn-primary" type="submit">I will bring this</button>
+    				</form>
+    				
+    			</div> <!-- /well well-sm -->
+    			<%
+    		}
+    			%>
+    		</div> <!-- /col-md-4 -->
+   		</div> <!-- /row -->
+
 	   	
 	      	
 	      </div>
@@ -135,8 +201,6 @@
     <script src="/js/externalJquery.js" type="text/javascript"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="js/ie10-viewport-bug-workaround.js"></script>
     <script src="js/bootstrap-datepicker.js"></script>
 
 

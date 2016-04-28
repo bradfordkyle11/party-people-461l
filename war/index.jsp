@@ -20,8 +20,6 @@
 
     <title>Party People</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="stylesheets/navbar-static-top.css" rel="stylesheet">
@@ -66,8 +64,10 @@
             <li><a href="#about">About</a></li>
             
             <%
+            PartyPeopleUser partyPeopleUser = new PartyPeopleUser();
             if (user!=null) {
-            	PartyPeopleUser partyPeopleUser = StorageHandler.getUser(user);
+            	partyPeopleUser = StorageHandler.getUser(user);
+            	pageContext.setAttribute("partyPeopleUser", partyPeopleUser);
             	if (partyPeopleUser==null){
             		partyPeopleUser = new PartyPeopleUser(user);
             		StorageHandler.save(partyPeopleUser);
@@ -87,18 +87,7 @@
 
 
 	<div class="container">
-		<%
-		if(request.getAttribute("desiredCategories")!=null){
-		%>
-		<p>${desiredCategories}</p>
-		<%
-		} 
-		if(request.getAttribute("startDate")!=null){
-		%>
-		<p>from ${startDate} to ${endDate}</p>
-		<%
-		}
-		%>
+
 		<div class="row">
 			<div class="col-sm-8">
 				<%
@@ -110,8 +99,13 @@
 				%>
 			</div>
 			<div class="col-sm-4">
-				<form role="form">
-					<input type="search" placeholder="Search parties" class="form-control" id="search">
+				<form role="form" method="post" action="update-filters">
+					<div class="input-group">
+						<input type="search" placeholder="Search parties" class="form-control" id="search" name="query">
+						<span class="input-group-btn">
+				       		<button class="btn btn-primary" type="submit">Search</button>
+				      	</span>
+					</div>
 				</form>
 			</div>
 	
@@ -149,48 +143,49 @@
 	    			pageContext.setAttribute("price", String.valueOf(event.getPrice()));
 	    			pageContext.setAttribute("id", event.getId().toString());
 	    	    	%>
-	    	    	<form role="form" method="post" action="party-page">
+	    	    	<form role="form" method="get" action="party-page">
 	    	    	<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>
+	    	    	
 	    	    	
 	    	    	<div class="well well-sm">
 			        <h2><a href="#" onclick="$(this).closest('form').submit()">${party_name}</a></h2>
+			        </form>
 			        <p>${category}</p>
 			        <p>${location}</p>
 			        <p>${description}</p>
 			        
-			        <p>
-			          <a class="btn btn-primary" href="#" role="button">RSVP &raquo;</a>
-			        </p>
+			        <!-- Button for RSVPing or deciding not to come -->
+			        <form role="form" method="post" action="rsvp">
+	    	    		<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>			        
+			        	<%
+			        	if(event.isAttending(partyPeopleUser)){
+			        		%>
+			        		<input type="hidden" value="false" name="rsvp?"/>
+	    	    			<button class="btn btn-primary" type="submit">I can't make it</button>
+			        		<%
+			        	} else {
+			        		%>
+		    	    		<input type="hidden" value="true" name="rsvp?"/>
+		    	    		<button class="btn btn-primary" type="submit">RSVP &raquo;</button>
+		    	    		<%
+			        	}
+	    	    		%>
+	    	    	</form>
+
 			      	</div>
-			      	</form>
+
 	    	    	<%
 	    		}
 
 	    	}
 	    	%>
-	      <!-- Main component for a primary marketing message or call to action -->
-		      <div class="well well-sm">
-		        <h2>Party 1</h2>
-		        <p>Example party. </p>
-		        <p>
-		          <a class="btn btn-primary" href="#" role="button">RSVP &raquo;</a>
-		        </p>
-		      </div>
-		      
-		      <div class="well well-sm">
-		        <h2>Party 2</h2>
-		        <p>Another party.</p>
-		        <p>
-		          <a class="btn btn-primary" href="#" role="button">RSVP &raquo;</a>
-		        </p>
-		      </div>
 	      </div>
 	      
 	      <div class="col-md-4">
 	      <div class="well well-sm">
 	      	<h3>Filters</h3>
 	      	
-	      	<form role="form" action="update-filters" method="post">
+	      	<form role="form" action="update-filters" method="get">
 	      		<h4>Categories:</h4>
 	      		<div class="checkbox">
 	      			<label><input type="checkbox" value="" name="Birthday">Birthday</label>
@@ -244,7 +239,6 @@
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="js/ie10-viewport-bug-workaround.js"></script>
     <script src="js/bootstrap-datepicker.js"></script>
 
     <script type="text/javascript">

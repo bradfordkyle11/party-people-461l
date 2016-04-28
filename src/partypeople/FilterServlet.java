@@ -18,7 +18,7 @@ public class FilterServlet extends HttpServlet {
 			Arrays.asList("Birthday", "Graduation", "Sports", "Holiday",
 					"Social", "Music", "Pool Party", "Other"));
 
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		Filter filter = new Filter();
 		// get the categories to filter with
@@ -33,18 +33,29 @@ public class FilterServlet extends HttpServlet {
 		if (desiredCategories.size() == 0) {
 			desiredCategories = null;
 		}
-		if (desiredCategories!=null){
-			filter.addFilterBehavior(new CategoryFilterBehavior(desiredCategories));	
+		if (desiredCategories != null) {
+			filter.addFilterBehavior(new CategoryFilterBehavior(
+					desiredCategories));
 		}
 
-
-		// create and return the date filter
-		if (!request.getParameter("start").equals("")) {
-			filter.addFilterBehavior(new DateFilterBehavior(
-					request.getParameter("start"), request.getParameter("end")));
+		// create the date filter
+		if (request.getParameter("start") != null) {
+			if (!request.getParameter("start").equals("")) {
+				filter.addFilterBehavior(new DateFilterBehavior(request
+						.getParameter("start"), request.getParameter("end")));
+			}
 		}
+
+		//create the keyword filter
+		if (request.getParameter("query") != null) {
+			if (!request.getParameter("query").equals("")) {
+				filter.addFilterBehavior(new KeywordFilterBehavior(request
+						.getParameter("query")));
+			}
+		}
+		
+		//return the filter
 		request.setAttribute("filter", filter);
-
 		request.getRequestDispatcher("index.jsp").forward(request, response);
 	}
 }
