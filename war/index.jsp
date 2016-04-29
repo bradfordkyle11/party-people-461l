@@ -100,6 +100,7 @@
 			</div>
 			<div class="col-sm-4">
 				<form role="form" method="post" action="update-filters">
+
 					<div class="input-group">
 						<input type="search" placeholder="Search parties" class="form-control" id="search" name="query">
 						<span class="input-group-btn">

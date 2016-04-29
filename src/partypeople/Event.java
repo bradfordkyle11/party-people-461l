@@ -32,6 +32,8 @@ public class Event implements Comparable<Event> {
 	@Load private Ref<PartyPeopleUser> owner;
 	@Load private List<Ref<PartyPeopleUser>> attending;
 	private String location = "";
+	private double latitude;
+	private double longitude;
 	private Date date;
 	private String description = "";
 	private List<Comment> comments;
@@ -52,7 +54,7 @@ public class Event implements Comparable<Event> {
 	}
 
 	public Event(PartyPeopleUser owner, String name, String description,
-			String category, String date, String time, String location,
+			String category, String date, String time, String location, double latitude, double longitude,
 			String publicOrPrivate, String password, String price,
 			String itemsNeeded) {
 		this.owner = Ref.create(owner);
@@ -71,6 +73,8 @@ public class Event implements Comparable<Event> {
 		}
 
 		this.location = location;
+		this.latitude = latitude;
+		this.longitude = longitude;
 		if (publicOrPrivate != null) {
 			this.privateEvent = publicOrPrivate.equals("private");
 		}
@@ -99,6 +103,22 @@ public class Event implements Comparable<Event> {
 
 	public Date getTimeCreated() {
 		return timeCreated;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 	public void setTimeCreated(Date timeCreated) {

@@ -23,6 +23,7 @@
     
     <link href="css/bootstrap-datepicker.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	
     
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -33,6 +34,7 @@
   </head>
 
   <body>
+      <script src="/js/externalJquery.js" type="text/javascript"></script>
 	<%
 	//get current user
 		UserService userService = UserServiceFactory.getUserService();
@@ -81,7 +83,7 @@
     
     <div class="container">
     	<h1>Create a new party event:</h1>
-    	<form id="new-party" role="form" action="new-party" method="post">
+    	<form id="new-party-form" name="new-party-form" role="form" action="new-party" method="post">
     		<div id="party-name-form-group" class="form-group">
     			<label class="control-label" for="party-name">Party name:</label>
     			<input type="text" class="form-control" id="party-name" name="party-name" placeholder="Enter the name of the party">
@@ -115,8 +117,9 @@
     		</div>
     		<div class="form-group">
     			<label class="control-label" for="location">Location:</label>
-    			<input type="text" class="form-control" name="location" placeholder="Enter location">
+    			<input type="text" class="form-control" name="location" id="location" placeholder="Enter location">
     		</div>
+    		<input type="hidden" value="" name="latlong" id="latlong">
     		<div class="form-group">
     			<label class="control-label" for="public-or-private">Public or private:</label>
     			<select class="form-control" id="public-or-private" name="public-or-private">
@@ -140,7 +143,9 @@
     			<label class="control-label" for="items-needed">Items needed:</label>
     			<textarea class="form-control" name="items-needed" rows="3" placeholder="Enter items needed separated by commas"></textarea>
     		</div>
-    		<button type="submit" class="btn btn-primary">Create party</button>
+    		<button class="btn btn-primary" type="button" onclick="submitForm()">Create party</button>
+    		<div id="floating-panel">
+
     		
     	</form>
 	   	
@@ -156,17 +161,76 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="/js/externalJquery.js" type="text/javascript"></script>
+
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="js/bootstrap-datepicker.js"></script>
 
-
+	<script async defer
+    	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBux1-zJMJGC5eMzSZI2ofmw_t06DuJajg&callback=initMap">
+    </script>
     <script type="text/javascript">
     $('#datepicker input').datepicker({
         todayHighlight: true
     });
     </script>
+    <script>
+    function submitForm(){
+    	geocodeAddress(geocoder);
+		
+    }
+    </script>
+    <script>
+    $("form").on("submit", function() {
+	var name = document.forms["new-party-form"]["party-name"].value;
+	if (name==""||name==null){
+		$("#party-name-form-group").toggleClass("has-error");
+		$("#party-name-form-group").append("<span class='help-block'>Please name your party</span>");
+		return false;
+	}
+	
+	var publicOrPrivate = $("#public-or-private").find(":selected").text();
+	if (publicOrPrivate=="Private"){
+    	var pass1 = document.forms["new-party-form"]["password"].value;
+    	var pass2 = document.forms["new-party-form"]["password-confirmation"].value;
+   	 	if (pass1 != pass2) {
+   	 		$("#password-form-group").toggleClass("has-error");
+   	 		//$("#password-form-group").append("<span class='help-block'>Passwords do not match</span>");
+   	 		$("#password-confirmation-form-group").toggleClass("has-error");
+   	 		$("#password-confirmation-form-group").append("<span class='help-block'>Passwords do not match</span>");
+       		//alert("Passwords do not match");
+        	return false;
+   		}
+	}	
+    });
+	</script>
+	<script>
+    function initMap() {
+        geocoder = new google.maps.Geocoder();
+
+        document.getElementById('submit').addEventListener('click', function() {
+          geocodeAddress(geocoder);
+        });
+      }
+
+      function geocodeAddress(geocoder) {
+		//alert(document.getElementById('latlong').value);
+        var address = document.getElementById('location').value;
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+        	  $('#latlong').val(results[0].geometry.location.toString());
+        	 // alert(document.getElementById('latlong').value);
+          	document.getElementById("new-party-form").submit();
+        	  
+
+          } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+            document.getElementById("new-party-form").submit();
+          }
+        });
+      }
+	</script>
+
 
   </body>
 </html>
