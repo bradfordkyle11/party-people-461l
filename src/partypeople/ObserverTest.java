@@ -17,20 +17,34 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.appengine.api.users.User;
+import com.google.appengine.api.capabilities.Capability;
+import com.google.appengine.api.capabilities.CapabilityStatus;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.tools.development.testing.LocalCapabilitiesServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.apphosting.api.ApiProxy;
 
 public class ObserverTest {
 	ArrayList<Event> events = new ArrayList<Event>();
 	PartyPeopleUser c = new PartyPeopleUser(new User("test3@gmail.com", "gmail.com"));
+	 private final LocalServiceTestHelper helper =
+			    new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 	
-/*	@Before
+	@Before
 	public void setUp() {
+		helper.setUp();
 		TestUser a = new TestUser(new User("test@gmail.com", "gmail.com"));
 		TestUser b = new TestUser(new User("test2@gmail.com", "gmail.com"));
-
+		StorageHandler.save(c);
 		Event observable = new Event();
 		observable.setName("Wrong Party");
 		observable.setOwner(c);
@@ -90,7 +104,12 @@ public class ObserverTest {
 		events.get(0).updateEvent(new Event());
 	}
 	
-	public class TestUser implements Observer {
+	@After
+	public void tearDown() {
+		helper.tearDown();
+	}
+	
+	public class TestUser implements PartyPeopleObserver {
 			private User googleUser;
 			
 			public TestUser(User googleUser){
@@ -98,7 +117,7 @@ public class ObserverTest {
 			}
 
 			@Override
-			public void update(Observable event, Object ob) {
+			public void update(PartyPeopleObservable event, Object ob) {
 				Event ev = (Event) event;
 				ArrayList<String> changed = (ArrayList<String>) ob;
 				String msgBody = "The event " + changed.get(0)
@@ -135,6 +154,6 @@ public class ObserverTest {
 			}
 		
 
-	} */
+	} 
 
 }

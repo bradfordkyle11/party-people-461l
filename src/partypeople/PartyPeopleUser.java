@@ -21,7 +21,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Load;
 
 @Entity
-public class PartyPeopleUser {
+public class PartyPeopleUser implements PartyPeopleObserver {
 	private User googleUser;
 	@Load private List<Ref<Event>> myAttending;
 	@Load private List<Ref<Event>> myCreated;
@@ -39,8 +39,8 @@ public class PartyPeopleUser {
 		myCreated = new ArrayList<Ref<Event>>();
 	}
 
-/*	@Override
-	public void update(Observable event, Object ob) {
+	@Override
+	public void update(PartyPeopleObservable event, Object ob) {
 		Event ev = (Event) event;
 		ArrayList<String> changed = (ArrayList<String>) ob;
 		String msgBody = "The event " + changed.get(0)
@@ -68,7 +68,7 @@ public class PartyPeopleUser {
 		}
 
 	}
-	*/
+	
 	
 	public Long getId() {
 		return id;

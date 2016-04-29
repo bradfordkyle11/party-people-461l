@@ -19,7 +19,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Load;
 
 @Entity
-public class Event implements Comparable<Event> {
+public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 	public static final int SOONEST_DATE = 0;
 	public static final int ALPHABETICAL = 1;
 	public static final int CLOSEST_DISTANCE = 2;
@@ -152,13 +152,13 @@ public class Event implements Comparable<Event> {
 		}
 
 		if (hasChanged) {
-			// setChanged();
+			setChanged();
 		}
 
 		// figure out what changed and turn it into a string to
 		// pass to the observers, so it can be emailed.
-		// notifyObservers(changed);
-		// clearChanged();
+		notifyObservers(changed);
+//		clearChanged();
 
 	}
 
@@ -168,12 +168,12 @@ public class Event implements Comparable<Event> {
 		}
 		Ref<PartyPeopleUser> attendee = Ref.create(u);
 		attending.add(attendee);
-		// addObserver(u);
+		addObserver(u);
 	}
 
 	public void removeAttendee(PartyPeopleUser u) {
 		attending.remove(Ref.create(u));
-		// deleteObserver(u);
+		deleteObserver(u);
 	}
 
 	public void addComment(String content, PartyPeopleUser commenter) {

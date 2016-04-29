@@ -10,6 +10,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class StorageHandler {
 	static {
 		ObjectifyService.register(Event.class);
+		ObjectifyService.register(PartyPeopleUser.class);
 	}
 	
 	public static void save(Object o){
