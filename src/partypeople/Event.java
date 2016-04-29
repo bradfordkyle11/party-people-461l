@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
@@ -62,6 +63,9 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 		this.description = description;
 		this.category = category;
 		if (date != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(0);
+			this.date = cal.getTime();
 			DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 			try {
 				this.date = dateFormat.parse(date);
@@ -69,7 +73,26 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// need to set the time
+			
+			String hour = time.substring(0,2);
+			String minute = time.substring(3,5);
+			
+			int numHours = Integer.parseInt(hour);
+			int numMinutes = Integer.parseInt(minute);
+			if (date.contains("P")){
+				if(numHours != 12)
+					numHours += 12;
+			}
+			else{									
+				if(numHours == 12){
+					numHours -= 12;
+				}
+			}
+			
+			this.date.setHours(numHours);
+			this.date.setMinutes(numMinutes); 
+			
+			
 		}
 
 		this.location = location;
