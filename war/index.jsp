@@ -191,7 +191,13 @@
 			        <form role="form" method="post" action="rsvp">
 	    	    		<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>			        
 			        	<%
-			        	if(event.isAttending(partyPeopleUser)){
+			        	if (user==null){
+			        		%>
+			        		<input type="hidden" value="false" name="rsvp?"/>
+	    	    			<button class="btn btn-primary" type="submit" disabled>Login to RSVP</button>
+			        		<%
+			        	}
+			        	else if(event.isAttending(partyPeopleUser)){
 			        		%>
 			        		<input type="hidden" value="false" name="rsvp?"/>
 	    	    			<button class="btn btn-primary" type="submit">I can't make it</button>
