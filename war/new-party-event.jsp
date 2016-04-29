@@ -83,7 +83,7 @@
     
     <div class="container">
     	<h1>Create a new party event:</h1>
-    	<form id="new-party-form" name="new-party-form" role="form" action="new-party" method="post">
+    	<form id="new-party-form" name="new-party-form" role="form" action="new-party" method="post" onsubmit="onSubmit()">
     		<div id="party-name-form-group" class="form-group">
     			<label class="control-label" for="party-name">Party name:</label>
     			<input type="text" class="form-control" id="party-name" name="party-name" placeholder="Enter the name of the party">
@@ -181,7 +181,7 @@
     }
     </script>
     <script>
-    $("form").on("submit", function() {
+    function onSubmit() {
 	var name = document.forms["new-party-form"]["party-name"].value;
 	if (name==""||name==null){
 		$("#party-name-form-group").toggleClass("has-error");
@@ -201,16 +201,14 @@
        		//alert("Passwords do not match");
         	return false;
    		}
+	
+	}
 	}	
-    });
 	</script>
 	<script>
     function initMap() {
         geocoder = new google.maps.Geocoder();
 
-        document.getElementById('submit').addEventListener('click', function() {
-          geocodeAddress(geocoder);
-        });
       }
 
       function geocodeAddress(geocoder) {
@@ -220,12 +218,16 @@
           if (status === google.maps.GeocoderStatus.OK) {
         	  $('#latlong').val(results[0].geometry.location.toString());
         	 // alert(document.getElementById('latlong').value);
+        	if(onSubmit()!=false){
           	document.getElementById("new-party-form").submit();
+        	}
         	  
 
           } else {
-            alert('Geocode was not successful for the following reason: ' + status);
+            //alert('Geocode was not successful for the following reason: ' + status);
+            if(onSubmit()!=false){
             document.getElementById("new-party-form").submit();
+            }
           }
         });
       }

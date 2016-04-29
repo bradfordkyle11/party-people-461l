@@ -55,11 +55,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Party People</a>
+          <a class="navbar-brand" href="/index.jsp#">Party People</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
+            <li class="active"><a href="/index.jsp#">Home</a></li>
             <li><a href="/my-account.jsp">My Account</a></li>
             <li><a href="#about">About</a></li>
             
@@ -99,7 +99,7 @@
 				%>
 			</div>
 			<div class="col-sm-4">
-				<form role="form" method="post" action="update-filters">
+				<form role="form" method="get" action="update-filters">
 
 					<div class="input-group">
 						<input type="search" placeholder="Search parties" class="form-control" id="search" name="query">
@@ -186,7 +186,7 @@
 	      <div class="well well-sm">
 	      	<h3>Filters</h3>
 	      	
-	      	<form role="form" action="update-filters" method="get">
+	      	<form role="form" action="update-filters" method="get" name="filter-form" id="filter-form">
 	      		<h4>Categories:</h4>
 	      		<div class="checkbox">
 	      			<label><input type="checkbox" value="" name="Birthday">Birthday</label>
@@ -218,7 +218,17 @@
     				<span class="input-group-addon">to</span>
    			 		<input type="text" class="input-sm form-control" name="end" />
 				</div>
-				<button type="submit" class="btn btn-primary">Apply</button>
+				<h4>Distance</h4>
+				<div class="form-group">
+	    			<label class="control-label" for="radius">Radius (in mi.):</label>
+	    			<input type="number" class="form-control" name="radius" id="radius" placeholder="Enter radius in miles">
+	    		</div>
+		    	<div class="form-group">
+	    			<label class="control-label" for="location">From location:</label>
+	    			<input type="text" class="form-control" name="location" id="location" placeholder="Enter location">
+	    		</div>
+	    		<input type="hidden" name="latlng" id="latlng">
+				<button type="button" class="btn btn-primary" onclick="submitFilterForm()">Apply</button>
 	      		
     			
     			
@@ -247,6 +257,40 @@
         todayHighlight: true
     });
     </script>
+    </script>
+    <script>
+    function initMap() {
+        geocoder = new google.maps.Geocoder();
+      }
+
+    function submitFilterForm(){
+    	//alert("you are here");
+    	if(document.getElementById("location").value != ""){
+    		geocodeAddress(geocoder);
+    	}
+    	else {
+    		document.getElementById("filter-form").submit();
+    	}
+    }
+      function geocodeAddress(geocoder) {
+		//alert(document.getElementById('latlong').value);
+        var address = document.getElementById('location').value;
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+        	  $('#latlng').val(results[0].geometry.location.toString());
+        	 // alert(document.getElementById('latlong').value);
+          	document.getElementById("filter-form").submit();
+        	  
+
+          } else {
+            //alert('Geocode was not successful for the following reason: ' + status);
+            document.getElementById("filter-form").submit();
+          }
+        });
+      }
+	</script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBux1-zJMJGC5eMzSZI2ofmw_t06DuJajg&callback=initMap"
+    async defer></script>
 
 
   </body>

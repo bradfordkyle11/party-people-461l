@@ -46,16 +46,29 @@ public class FilterServlet extends HttpServlet {
 			}
 		}
 
-		//create the keyword filter
+		// create the keyword filter
 		if (request.getParameter("query") != null) {
 			if (!request.getParameter("query").equals("")) {
 				filter.addFilterBehavior(new KeywordFilterBehavior(request
 						.getParameter("query")));
 			}
 		}
-		
-		//return the filter
+
+		// create the distance filter
+
+		if (request.getParameter("radius") != null
+				&& request.getParameter("latlng") != null) {
+			if (!request.getParameter("radius").equals("")
+					&& !request.getParameter("latlng").equals("")) {
+				filter.addFilterBehavior(new DistanceFilterBehavior(request
+						.getParameter("radius"), request.getParameter("latlng")));
+			}
+
+		}
+
+		// return the filter
 		request.setAttribute("filter", filter);
 		request.getRequestDispatcher("index.jsp").forward(request, response);
+
 	}
 }
