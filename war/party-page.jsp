@@ -100,7 +100,13 @@
     <form role="form" method="post" action="rsvp">
    		<input type="hidden" value="<%=String.valueOf(((Event)request.getAttribute("event")).getId())%>" name="event-id"/>			        
     	<%
-    	if(((Event)pageContext.getAttribute("event")).isAttending(partyPeopleUser)){
+    	if (user==null){
+    		%>
+    		<input type="hidden" value="false" name="rsvp?"/>
+   			<button class="btn btn-primary" type="submit" disabled>Login to RSVP</button>
+    		<%
+    	}
+    	else if(((Event)pageContext.getAttribute("event")).isAttending(partyPeopleUser)){
     		%>
     		<input type="hidden" value="false" name="rsvp?"/>
    			<button class="btn btn-primary" type="submit">I can't make it</button>
