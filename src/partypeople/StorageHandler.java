@@ -11,6 +11,7 @@ public class StorageHandler {
 	static {
 		ObjectifyService.register(Event.class);
 		ObjectifyService.register(PartyPeopleUser.class);
+		ObjectifyService.register(Item.class);
 	}
 	
 	public static void save(Object o){

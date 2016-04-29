@@ -41,7 +41,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 	private boolean privateEvent;
 	private String password = "";
 	private double price;
-	private List<String> itemsNeeded;
+	@Load private List<Ref<Item>> itemsNeeded;
 	private String category = "";
 	private Date timeCreated;
 
@@ -79,7 +79,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 			
 			int numHours = Integer.parseInt(hour);
 			int numMinutes = Integer.parseInt(minute);
-			if (date.contains("P")){
+			if (time.contains("P")){
 				if(numHours != 12)
 					numHours += 12;
 			}
@@ -106,10 +106,16 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 		if (!price.equals("")) {
 			this.price = Double.parseDouble(price);
 		}
-		this.itemsNeeded = new ArrayList<String>(Arrays.asList(itemsNeeded
+		this.itemsNeeded = new ArrayList<Ref<Item>>();
+		ArrayList<String> itemsNeededTemp = new ArrayList<String>(Arrays.asList(itemsNeeded
 				.split(",")));
-		while (this.itemsNeeded.contains("")){
-			this.itemsNeeded.remove("");
+		while (itemsNeededTemp.contains("")){
+			itemsNeededTemp.remove("");
+		}
+		
+		for(String s : itemsNeededTemp){
+			Item item = new Item(s, null);
+			this.itemsNeeded.add(Ref.create(item));
 		}
 
 		this.attending = new ArrayList<Ref<PartyPeopleUser>>();
@@ -185,7 +191,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 		this.comments = newEvent.getComments();
 		this.privateEvent = newEvent.isPrivateEvent();
 		this.password = newEvent.getPassword();
-		this.itemsNeeded = newEvent.getItemsNeeded();
+		this.itemsNeeded = newEvent.getItemsNeededRef();
 		this.category = newEvent.getCategory();
 
 		this.attending.clear();
@@ -259,6 +265,24 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 	public void setAttending(List<Ref<PartyPeopleUser>> attending) {
 		this.attending = attending;
 	}
+	
+	public List<Item> getItemsNeeded() {
+		ArrayList<Item> itemsList = new ArrayList<Item>();
+		if (itemsNeeded != null){
+			for(Ref<Item> item : itemsNeeded){
+				itemsList.add(item.safeGet());
+			}
+		}
+		return itemsList;
+	}
+	
+	public List<Ref<Item>> getItemsNeededRef(){
+		return this.itemsNeeded;
+	}
+
+	public void setItemsNeeded(List<Ref<Item>> itemsNeeded) {
+		this.itemsNeeded = itemsNeeded;
+	}
 
 	public String getLocation() {
 		return location;
@@ -317,17 +341,6 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 
 	public void setPrice(double price) {
 		this.price = price;
-	}
-
-	public List<String> getItemsNeeded() {
-		if (itemsNeeded==null){
-			itemsNeeded = new ArrayList<String>();
-		}
-		return itemsNeeded;
-	}
-
-	public void setItemsNeeded(List<String> itemsNeeded) {
-		this.itemsNeeded = itemsNeeded;
 	}
 
 	public String getCategory() {
