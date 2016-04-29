@@ -105,7 +105,7 @@
     				<option>Other</option>
     			</select>
     		</div>
-    		<div class="form-group">
+    		<div class="form-group" id="date-form-group">
     			<label class="control-label" for ="date">Date:</label>
     			<div class="input-group date" data-provide="datepicker" id="datepicker">
 					<input name="date" type="text" class="form-control" placeholder="Enter date"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
@@ -182,27 +182,34 @@
     </script>
     <script>
     function onSubmit() {
-	var name = document.forms["new-party-form"]["party-name"].value;
-	if (name==""||name==null){
-		$("#party-name-form-group").toggleClass("has-error");
-		$("#party-name-form-group").append("<span class='help-block'>Please name your party</span>");
-		return false;
-	}
-	
-	var publicOrPrivate = $("#public-or-private").find(":selected").text();
-	if (publicOrPrivate=="Private"){
-    	var pass1 = document.forms["new-party-form"]["password"].value;
-    	var pass2 = document.forms["new-party-form"]["password-confirmation"].value;
-   	 	if (pass1 != pass2) {
-   	 		$("#password-form-group").toggleClass("has-error");
-   	 		//$("#password-form-group").append("<span class='help-block'>Passwords do not match</span>");
-   	 		$("#password-confirmation-form-group").toggleClass("has-error");
-   	 		$("#password-confirmation-form-group").append("<span class='help-block'>Passwords do not match</span>");
-       		//alert("Passwords do not match");
-        	return false;
-   		}
-	
-	}
+		var name = document.forms["new-party-form"]["party-name"].value;
+		if (name==""||name==null){
+			$("#party-name-form-group").toggleClass("has-error");
+			$("#party-name-form-group").append("<span class='help-block'>Please name your party</span>");
+			return false;
+		}
+		
+		var publicOrPrivate = $("#public-or-private").find(":selected").text();
+		if (publicOrPrivate=="Private"){
+	    	var pass1 = document.forms["new-party-form"]["password"].value;
+	    	var pass2 = document.forms["new-party-form"]["password-confirmation"].value;
+	   	 	if (pass1 != pass2) {
+	   	 		$("#password-form-group").toggleClass("has-error");
+	   	 		//$("#password-form-group").append("<span class='help-block'>Passwords do not match</span>");
+	   	 		$("#password-confirmation-form-group").toggleClass("has-error");
+	   	 		$("#password-confirmation-form-group").append("<span class='help-block'>Passwords do not match</span>");
+	       		//alert("Passwords do not match");
+	        	return false;
+	   		}
+		
+		}
+		
+		var date = document.forms["new-party-form"]["date"].value;
+		if(date==null||date==""){
+			$("#date-form-group").toggleClass("has-error");
+			$("#date-form-group").append("<span class='help-block'>Please select a date</span>");
+			return false;
+		}
 	}	
 	</script>
 	<script>

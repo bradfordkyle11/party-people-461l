@@ -11,28 +11,32 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
-public class RSVPServlet extends HttpServlet{
+public class CommentServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
 		
-		PartyPeopleUser attendee = StorageHandler.getUser(user);
+		PartyPeopleUser commenter = StorageHandler.getUser(user);
 		
-		String id = (String) request.getParameter("event-id");
+		String id = request.getParameter("event-id");
 		Event event = StorageHandler.findEventById(Long.parseLong(id));
-		
-		if (request.getParameter("rsvp?").equals("true")){
-			event.addAttendee(attendee);
-			attendee.addAttending(event);
+		String content = request.getParameter("comment-content");
+			
+		if (request.getParameter("action").equals("post")){
+			Comment comment = new Comment(content, commenter, event);
+			StorageHandler.save(comment);
+			event.addComment(comment);
 		}
-		else {
-			event.removeAttendee(attendee);
-			attendee.removeAttending(event);
+		else if (request.getParameter("action").equals("delete")) {
+			String commentId = request.getParameter("comment-id");
+			if(commentId!=null&&commentId!=""){
+				Comment comment = StorageHandler.findCommentById(Long.parseLong(commentId));
+				StorageHandler.delete(comment);
+			}
 		}
 		StorageHandler.save(event);
-		StorageHandler.save(attendee);
 		
 		response.sendRedirect(request.getHeader("referer"));
 	}

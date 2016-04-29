@@ -2,10 +2,13 @@
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Collections" %>
 <%@ page import="partypeople.PartyPeopleUser" %>
 <%@ page import="partypeople.StorageHandler" %>
 <%@ page import="partypeople.Event" %>
 <%@ page import="partypeople.Item" %>
+<%@ page import="partypeople.Comment" %>
 
 <html lang="en">
   <head>
@@ -69,10 +72,10 @@
             		StorageHandler.save(partyPeopleUser);
             	}
             %>
-            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout</a>
+            <li><a href="<%= userService.createLogoutURL("/") %>">Logout</a>
             <%} else {
             %>
-            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login</a>
+            <li><a href="<%= userService.createLoginURL("/") %>">Login</a>
             <%
             }
             %>
@@ -187,6 +190,47 @@
     			%>
     		</div> <!-- /col-md-4 -->
    		</div> <!-- /row -->
+   		<form role="form" action="post-comment" method="post">
+   			<div class="form-group">
+    			<label class="control-label" for ="comment-content">Write a comment:</label>
+    			<textarea class="form-control" rows="3" name="comment-content" placeholder="Write a comment"></textarea>
+    			<input type="hidden" value="<%=String.valueOf(((Event)request.getAttribute("event")).getId())%>" name="event-id"/>
+    			<input type="hidden" value="post" name="action">
+    		</div>
+    		<%
+    		if (user!=null){
+    		%>
+    		<button class="btn btn-primary" type="submit">Submit</button> 
+    		<%
+    		} else {
+    		%>
+    		<button class="btn btn-primary" disabled>Login to comment</button> 
+    		<%
+    		}
+    		%>
+   		</form>
+   		
+   		<div>
+   			<h3>Comments</h3>
+   			<%
+   			if (((Event)request.getAttribute("event")).getComments().isEmpty()){
+   				%>
+   				<p>There are no comments about this party yet.</p>
+   				<%
+   			} else {
+   				List<Comment> comments = ((Event)request.getAttribute("event")).getComments();
+   				Collections.sort(comments);
+   				for(Comment comment : comments){
+   			%>
+   				<div class="well well-sm">
+   					<p><%=partyPeopleUser.toString() + " wrote on " + comment.getTimePosted().toString() %></p>
+   					<p><%=comment.getContent() %>
+   				</div>
+   				<%
+   				}
+   			}
+   			%>
+   		</div>
 
 	   	
 	      	

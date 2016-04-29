@@ -84,10 +84,10 @@
             		StorageHandler.save(partyPeopleUser);
             	}
             %>
-            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout</a>
+            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout (You are logged in as <%=user.getEmail()%>)</a>
             <%} else {
             %>
-            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login</a>
+            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login with Google</a>
             <%
             }
             %>
@@ -105,6 +105,10 @@
 				if (user!=null){
 				%>
 				<a class="btn btn-primary" href="/new-party-event.jsp" role="button">Create New Party Event</a>
+				<%
+				} else {
+				%>
+				<a class="btn btn-primary" role="button" disabled>Login To Create Party Event</a>
 				<%
 				}
 				%>
@@ -150,7 +154,7 @@
 	    			pageContext.setAttribute("party_name", event.getName());
 	    			pageContext.setAttribute("description", event.getDescription());
 	    			pageContext.setAttribute("category", event.getCategory());
-	    			//pageContext.setAttribute("date", event.getDate().toString());
+	    			pageContext.setAttribute("date", event.getDate().toString());
 	    			pageContext.setAttribute("location", event.getLocation());
 	    			pageContext.setAttribute("price", String.valueOf(event.getPrice()));
 	    			pageContext.setAttribute("id", event.getId().toString());
@@ -171,7 +175,7 @@
      					 </div>
      					 <div class="col-xs-8 col-sm-6">
      					 
-     					 <p><strong>When: </strong> <!--  ${date}--></p>
+     					 <p><strong>When: </strong> ${date}</p>
      					 <p><strong>Where:</strong> ${location}</p>
      					 <p><strong>Cost:</strong> ${price}</p>
 			        	</div>

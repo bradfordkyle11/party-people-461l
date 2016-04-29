@@ -59,8 +59,9 @@
             <li><a href="#about">About</a></li>
             
             <%
+            PartyPeopleUser partyPeopleUser = new PartyPeopleUser();
             if (user!=null) {
-            	PartyPeopleUser partyPeopleUser = StorageHandler.getUser(user);
+            	partyPeopleUser = StorageHandler.getUser(user);
             	if (partyPeopleUser==null){
             		partyPeopleUser = new PartyPeopleUser(user);
             		StorageHandler.save(partyPeopleUser);
@@ -85,43 +86,143 @@
 	
 	      <div class="col-md-6">
 	      <h1>Created Parties:</h1>
-	      <!-- Main component for a primary marketing message or call to action -->
-		      <div class="well well-sm">
-		        <h2>Party 1</h2>
-		        <p>Example party. </p>
-		        <p>
-		          <a class="btn btn-primary" href="#" role="button">Edit &raquo;</a>
-		        </p>
-		      </div>
-		      
-		      <div class="well well-sm">
-		        <h2>Party 2</h2>
-		        <p>Another party.</p>
-		        <p>
-		          <a class="btn btn-primary" href="#" role="button">Edit &raquo;</a>
-		        </p>
-		      </div>
+		      <%
+			//load and display events
+
+			if (partyPeopleUser!=null){
+	   		List<Event> events = partyPeopleUser.getCreated();
+	   		if (events.isEmpty()){
+	    	%>
+	    	<p>You have not created any parties.</p>
+	    	<%
+	    	} else {
+	    		for (Event event : events){
+	    			pageContext.setAttribute("party_name", event.getName());
+	    			pageContext.setAttribute("description", event.getDescription());
+	    			pageContext.setAttribute("category", event.getCategory());
+	    			pageContext.setAttribute("date", event.getDate().toString());
+	    			pageContext.setAttribute("location", event.getLocation());
+	    			pageContext.setAttribute("price", String.valueOf(event.getPrice()));
+	    			pageContext.setAttribute("id", event.getId().toString());
+	    	    	%>
+	    	    	<form role="form" method="get" action="party-page">
+	    	    	<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>
+	    	    	
+	    	    	
+	    	    	<div class="well well-sm">
+			        <h2><a href="#" onclick="$(this).closest('form').submit()">${party_name}</a></h2>
+			        </form>
+
+			        
+			        <p1 class=italic>${category}<br><br></p1>
+			       	<div class="row">
+      					<div class="col-xs-8 col-sm-6">
+        		        <p>${description}</p>
+     					 </div>
+     					 <div class="col-xs-8 col-sm-6">
+     					 
+     					 <p><strong>When: </strong> ${date}</p>
+     					 <p><strong>Where:</strong> ${location}</p>
+     					 <p><strong>Cost:</strong> ${price}</p>
+			        	</div>
+			        </div>
+			        	
+			        
+
+	
+			        
+			        <!-- Button for editing the party -->
+			        <form role="form" method="post" action="edit-party">
+	    	    		<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>	
+	    	    		<button class="btn btn-primary" type="submit">Edit</button>		        
+	    	    	</form>
+
+			      	</div>
+
+	    	    	<%
+	    		}
+
+	    	}
+			}
+	    	%>
+		       
 		      
 	      </div>
 
 	      <div class="col-md-6">
 	      <h1>Attending Parties:</h1>
-	      <!-- Main component for a primary marketing message or call to action -->
-		      <div class="well well-sm">
-		        <h2>Party 1</h2>
-		        <p>Example party. </p>
-		        <p>
-		          <a class="btn btn-primary" href="#" role="button">Details &raquo;</a>
-		        </p>
-		      </div>
-		      
-		      <div class="well well-sm">
-		        <h2>Party 2</h2>
-		        <p>Another party.</p>
-		        <p>
-		          <a class="btn btn-primary" href="#" role="button">Details &raquo;</a>
-		        </p>
-		      </div>
+	      
+		      <%
+			//load and display events
+
+			if (partyPeopleUser!=null){
+	   		List<Event> events = partyPeopleUser.getAttending();
+	   		if (events.isEmpty()){
+	    	%>
+	    	<p>You have not RSVP'd to attend any parties.</p>
+	    	<%
+	    	} else {
+	    		for (Event event : events){
+	    			pageContext.setAttribute("party_name", event.getName());
+	    			pageContext.setAttribute("description", event.getDescription());
+	    			pageContext.setAttribute("category", event.getCategory());
+	    			pageContext.setAttribute("date", event.getDate().toString());
+	    			pageContext.setAttribute("location", event.getLocation());
+	    			pageContext.setAttribute("price", String.valueOf(event.getPrice()));
+	    			pageContext.setAttribute("id", event.getId().toString());
+	    	    	%>
+	    	    	<form role="form" method="get" action="party-page">
+	    	    	<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>
+	    	    	
+	    	    	
+	    	    	<div class="well well-sm">
+			        <h2><a href="#" onclick="$(this).closest('form').submit()">${party_name}</a></h2>
+			        </form>
+
+			        
+			        <p1 class=italic>${category}<br><br></p1>
+			       	<div class="row">
+      					<div class="col-xs-8 col-sm-6">
+        		        <p>${description}</p>
+     					 </div>
+     					 <div class="col-xs-8 col-sm-6">
+     					 
+     					 <p><strong>When: </strong> ${date}</p>
+     					 <p><strong>Where:</strong> ${location}</p>
+     					 <p><strong>Cost:</strong> ${price}</p>
+			        	</div>
+			        </div>
+			        	
+			        
+
+	
+			        
+			        <!-- Button for RSVPing or deciding not to come -->
+			        <form role="form" method="post" action="rsvp">
+	    	    		<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>			        
+			        	<%
+			        	if(event.isAttending(partyPeopleUser)){
+			        		%>
+			        		<input type="hidden" value="false" name="rsvp?"/>
+	    	    			<button class="btn btn-primary" type="submit">I can't make it</button>
+			        		<%
+			        	} else {
+			        		%>
+		    	    		<input type="hidden" value="true" name="rsvp?"/>
+		    	    		<button class="btn btn-primary" type="submit">RSVP &raquo;</button>
+		    	    		<%
+			        	}
+	    	    		%>
+	    	    	</form>
+
+			      	</div>
+
+	    	    	<%
+	    		}
+
+	    	}
+			}
+	    	%>
 	      </div>
 	      </div>
 

@@ -39,7 +39,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	private double longitude;
 	private Date date;
 	private String description = "";
-	private List<Comment> comments;
+	@Load private List<Ref<Comment>> comments;
 	private boolean privateEvent;
 	private String password = "";
 	private double price;
@@ -123,7 +123,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		}
 
 		this.attending = new ArrayList<Ref<PartyPeopleUser>>();
-		this.comments = new ArrayList<Comment>();
+		this.comments = new ArrayList<Ref<Comment>>();
 	}
 
 	public int getSortType() {
@@ -192,7 +192,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 			hasChanged = true;
 		}
 		this.description = newEvent.getDescription();
-		this.comments = newEvent.getComments();
+		this.comments = newEvent.getRefComments();
 		this.privateEvent = newEvent.isPrivateEvent();
 		this.password = newEvent.getPassword();
 		this.itemsNeeded = newEvent.getItemsNeededRef();
@@ -231,13 +231,22 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 
 	public void addComment(String content, PartyPeopleUser commenter) {
 		if (comments == null) {
-			comments = new ArrayList<Comment>();
+			comments = new ArrayList<Ref<Comment>>();
 		}
-		comments.add(new Comment(content, commenter));
+		Comment newComment = new Comment(content, commenter);
+		StorageHandler.save(newComment);
+		comments.add(Ref.create(newComment));
+	}
+	
+	public void addComment(Comment comment){
+		if (comments == null){
+			comments = new ArrayList<Ref<Comment>>();
+		}
+		comments.add(Ref.create(comment));
 	}
 
 	public void removeComment(Comment comment) {
-		comments.remove(comment);
+		comments.remove(Ref.create(comment));
 	}
 
 	public String getName() {
@@ -313,14 +322,29 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	}
 
 	public List<Comment> getComments() {
-		if (comments == null) {
-			comments = new ArrayList<Comment>();
+		ArrayList<Comment> result = new ArrayList<Comment>();
+		if (comments != null) {
+			for (Ref<Comment> comment : comments){
+				result.add(comment.safeGet());
+			}
+		}
+		
+		return result;
+	}
+	
+	public List<Ref<Comment>> getRefComments(){
+		if (comments==null){
+			comments = new ArrayList<Ref<Comment>>();
 		}
 		return comments;
 	}
 
 	public void setComments(List<Comment> comments) {
-		this.comments = comments;
+		ArrayList<Ref<Comment>> updatedComments = new ArrayList<Ref<Comment>>();
+		for (Comment comment : comments){
+			updatedComments.add(Ref.create(comment));
+		}
+		this.comments = updatedComments;
 	}
 
 	public boolean isPrivateEvent() {
@@ -430,7 +454,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	}
 
 	public boolean equals(Event other) {
-		return this.toString().equals(other.toString());
+		return this.id == other.getId();
 	}
 
 }

@@ -12,6 +12,7 @@ public class StorageHandler {
 		ObjectifyService.register(Event.class);
 		ObjectifyService.register(PartyPeopleUser.class);
 		ObjectifyService.register(Item.class);
+		ObjectifyService.register(Comment.class);
 	}
 	
 	public static void save(Object o){
@@ -20,6 +21,10 @@ public class StorageHandler {
 	
 	public static void delete(Object o){
 		ofy().delete().entity(o).now();
+	}
+	public static void delete(Comment c){
+		c.getAssociatedEvent().removeComment(c);
+		ofy().delete().entity(c).now();
 	}
 	
 	public static PartyPeopleUser getUser(User user){
@@ -42,5 +47,9 @@ public class StorageHandler {
 	
 	public static Event findEventById(long id){
 		return ObjectifyService.ofy().load().type(Event.class).id(id).getValue();
+	}
+	
+	public static Comment findCommentById(long id){
+		return ObjectifyService.ofy().load().type(Comment.class).id(id).getValue();
 	}
 }

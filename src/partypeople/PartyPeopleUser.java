@@ -89,8 +89,30 @@ public class PartyPeopleUser implements PartyPeopleObserver {
 	public void addCreated(Event event){
 		myCreated.add(Ref.create(event));
 	}
+	
+	public List<Event> getCreated(){
+		List<Event> created = new ArrayList<Event>();
+		if (this.myCreated!=null){
+			for (Ref<Event> event : myCreated){
+				created.add(event.safeGet());
+			}
+		}
+		return created;
+	}
 	public void addAttending(Event event){
 		myAttending.add(Ref.create(event));
+	}
+	public void removeAttending(Event event){
+		myAttending.remove(Ref.create(event));
+	}
+	public List<Event> getAttending(){
+		List<Event> attending = new ArrayList<Event>();
+		if (this.myAttending!=null){
+			for (Ref<Event> event : myAttending){
+				attending.add(event.safeGet());
+			}
+		}
+		return attending;
 	}
 	public boolean equals(PartyPeopleUser other){
 		return this.googleUser.getEmail().equals(other.getGoogleUser().getEmail());
