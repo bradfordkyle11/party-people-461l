@@ -134,7 +134,9 @@
     <div class="container">
     	<h1>Upcoming Parties:</h1>
 	   	<div class="row">
-	
+	   	
+	   	
+		  <!-- TODO: only display a certain number of parties per page -->
 	      <div class="col-md-8">
           <%
 			//load and display events

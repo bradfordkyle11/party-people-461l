@@ -1,14 +1,16 @@
 package partypeople;
 
+import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Load;
 
 @Entity
 public class Item {
 	@Id 
 	Long id;
 	private String itemName;
-	private PartyPeopleUser userLink;
+	@Load private Ref<PartyPeopleUser> userLink;
 	
 	
 	
@@ -17,12 +19,14 @@ public class Item {
 	
 	public Item(String name, PartyPeopleUser user){
 		itemName = name;
-		userLink = user;
+		if (user!=null){
+			userLink = Ref.create(user);
+		}
 		StorageHandler.save(this);
 	}
 	
 	public void setUser(PartyPeopleUser user){
-		userLink = user;
+		userLink = Ref.create(user);
 	}
 	
 	public void setName(String name){
@@ -30,11 +34,22 @@ public class Item {
 	}
 	
 	public PartyPeopleUser getUser(){
-		return userLink;
+		if (userLink==null){
+			return null;
+		}
+		return userLink.safeGet();
+	}
+	
+	public void removeUser(){
+		userLink = null;
 	}
 	
 	public String getName(){
 		return itemName;
+	}
+
+	public Long getId() {
+		return id;
 	}
 	
 }

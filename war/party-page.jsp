@@ -168,20 +168,71 @@
     			
     		
     		%>
+    		<!-- Display item sign-up checklist -->
     			<div class="well well-sm">
  			        
-    				<form role="form" method="post" action="#">
+    				<form role="form" method="post" action="item-sign-up">
 	    				<h4>Items needed:</h4>
+	    				<input type="hidden" name="num-items" value="<%=((Event)pageContext.getAttribute("event")).getItemsNeeded().size()%>">
 	    				<%
+	    				int i = 0;
+	    				boolean bringingItem = false;
 	    				for (Item neededItem : ((Event)pageContext.getAttribute("event")).getItemsNeeded()){
+	    					if (neededItem.getUser()==null){
 	    					%>
 	    					<div class="checkbox">
-		      					<label><input type="checkbox" value="" name="<%=neededItem.getName()%>"><%=neededItem.getName()%></label>
+		      					<label><input type="checkbox" value="" name="<%="item" + String.valueOf(i)%>"><%=neededItem.getName()%></label>
+		      					<input type="hidden" value="<%=String.valueOf(neededItem.getId())%>" name="<%="id" + String.valueOf(i)%>"></input>
 		      				</div>
+	    					<%
+	    					} else if (user!=null){
+	    						if (neededItem.getUser().equals(partyPeopleUser)){
+	    							bringingItem = true;
+	    							%>
+	    							<div class="checkbox">
+				      					<label><input type="checkbox" value="" name="<%="item" + String.valueOf(i)%>" checked="true" disabled><%=neededItem.getName()%></label>
+				      					<input type="hidden" value="" name="<%="item" + String.valueOf(i)%>">
+				      					<input type="hidden" value="<%=String.valueOf(neededItem.getId())%>" name="<%="id" + String.valueOf(i)%>"></input>
+				      				</div>
+	    							<%
+	    						}
+	    						else {
+	    							%>
+	    							<div class="checkbox">
+				      					<label><input type="checkbox" value="" name="<%="item" + String.valueOf(i)%>"><%=neededItem.getName()%></label>
+				      					<input type="hidden" value="<%=String.valueOf(neededItem.getId())%>" name="<%="id" + String.valueOf(i)%>"></input>
+				      				</div>
+	    							<%
+	    						}
+	    					} else {
+	    						%>
+    							<div class="checkbox">
+			      					<label><input type="checkbox" value="" name="<%="item" + String.valueOf(i)%>" checked="true" disabled><%=neededItem.getName()%></label>
+			      					<input type="hidden" value="" name="<%="item" + String.valueOf(i)%>">
+			      					<input type="hidden" value="<%=String.valueOf(neededItem.getId())%>" name="<%="id" + String.valueOf(i)%>"></input>
+			      				</div>
+    							<%
+	    					}
+	    					i++;
+	    				}
+	    				
+	    				if (user==null){
+	    				%>
+	    				
+	    				<button class="btn btn-primary" type="submit" disabled>Login to sign up to bring item</button>
+	    				<%
+	    				} else if (bringingItem==false){
+	    				%>
+	    				<input type="hidden" name="sign-up" value="true">
+	    				<button class="btn btn-primary" type="submit">I will bring this</button>
+	    				<%
+	    				} else {
+	    					%>
+	    					<input type="hidden" name="sign-up" value="false">
+	    					<button class="btn btn-primary" type="submit">I can't bring this anymore</button>
 	    					<%
 	    				}
 	    				%>
-	    				<button class="btn btn-primary" type="submit">I will bring this</button>
     				</form>
     				
     			</div> <!-- /well well-sm -->

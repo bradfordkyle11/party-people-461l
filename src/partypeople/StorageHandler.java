@@ -52,4 +52,8 @@ public class StorageHandler {
 	public static Comment findCommentById(long id){
 		return ObjectifyService.ofy().load().type(Comment.class).id(id).getValue();
 	}
+	
+	public static Item findItemById(Long id){
+		return ObjectifyService.ofy().load().type(Item.class).id(id).getValue();
+	}
 }

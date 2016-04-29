@@ -130,11 +130,19 @@
 			        
 
 	
+			        <!-- TODO: functioning edit button -->
 			        
 			        <!-- Button for editing the party -->
 			        <form role="form" method="post" action="edit-party">
 	    	    		<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>	
 	    	    		<button class="btn btn-primary" type="submit">Edit</button>		        
+	    	    	</form>
+	    	    	
+	    	    	<!-- TODO: functioning delete button -->
+	    	    	<!-- Delete button -->
+	    	    	<form role="form" method="post" action="delete-party">
+	    	    		<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>	
+	    	    		<button class="btn btn-danger" type="submit">Delete</button>		        
 	    	    	</form>
 
 			      	</div>
