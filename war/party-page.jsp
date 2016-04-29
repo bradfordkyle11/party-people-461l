@@ -135,6 +135,7 @@
     		<div>
     			<p name="location"><%="Location: " + ((Event)request.getAttribute("event")).getLocation()%></p>
     		</div>
+    		<div id="map"></div>
     		<div>
 				<p name="price"><%="Price: " + String.valueOf(((Event)request.getAttribute("event")).getPrice())%></p>
     		</div>
@@ -164,6 +165,7 @@
     		
     		%>
     			<div class="well well-sm">
+ 			        
     				<form role="form" method="post" action="#">
 	    				<h4>Items needed:</h4>
 	    				<%
@@ -202,6 +204,26 @@
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="js/bootstrap-datepicker.js"></script>
+
+    <script>
+      var map;
+      function initMap() {
+    	  var myLatLng = {lat: <%=((Event)request.getAttribute("event")).getLatitude()%>, lng: <%=((Event)request.getAttribute("event")).getLongitude()%>};
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: myLatLng,
+          zoom: 15
+        });
+        
+        var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+            title: 'Hello World!'
+          });
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBux1-zJMJGC5eMzSZI2ofmw_t06DuJajg&callback=initMap"
+    async defer></script>
 
 
     <script type="text/javascript">
