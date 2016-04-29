@@ -5,6 +5,7 @@
 <%@ page import="partypeople.PartyPeopleUser" %>
 <%@ page import="partypeople.StorageHandler" %>
 <%@ page import="partypeople.Event" %>
+<%@ page import="partypeople.Item" %>
 
 <html lang="en">
   <head>
@@ -169,10 +170,10 @@
     				<form role="form" method="post" action="#">
 	    				<h4>Items needed:</h4>
 	    				<%
-	    				for (String neededItem : ((Event)pageContext.getAttribute("event")).getItemsNeeded()){
+	    				for (Item neededItem : ((Event)pageContext.getAttribute("event")).getItemsNeeded()){
 	    					%>
 	    					<div class="checkbox">
-		      					<label><input type="checkbox" value="" name="<%=neededItem%>"><%=neededItem%></label>
+		      					<label><input type="checkbox" value="" name="<%=neededItem.getName()%>"><%=neededItem.getName()%></label>
 		      				</div>
 	    					<%
 	    				}
