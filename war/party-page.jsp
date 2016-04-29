@@ -305,17 +305,21 @@
       var map;
       function initMap() {
     	  var myLatLng = {lat: <%=((Event)request.getAttribute("event")).getLatitude()%>, lng: <%=((Event)request.getAttribute("event")).getLongitude()%>};
-
+		if (myLatLng.lat!=0 || myLatLng.lat!=0){
         map = new google.maps.Map(document.getElementById('map'), {
           center: myLatLng,
           zoom: 15
         });
         
+        
         var marker = new google.maps.Marker({
             position: myLatLng,
-            map: map,
-            title: 'Hello World!'
+            map: map
           });
+		}
+		else{
+			var m = document.getElementById("map").style.height = 0;
+		}
       }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBux1-zJMJGC5eMzSZI2ofmw_t06DuJajg&callback=initMap"
