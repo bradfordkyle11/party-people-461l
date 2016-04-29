@@ -73,7 +73,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			/*
+			
 			String hour = time.substring(0,2);
 			String minute = time.substring(3,5);
 			
@@ -83,14 +83,15 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 				if(numHours != 12)
 					numHours += 12;
 			}
-			else{									heres the finished time
+			else{									
 				if(numHours == 12){
 					numHours -= 12;
 				}
 			}
+			
 			this.date.setHours(numHours);
 			this.date.setMinutes(numMinutes); 
-			*/
+			
 			
 		}
 
