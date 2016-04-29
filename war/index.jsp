@@ -213,6 +213,15 @@
 	      	<h3>Filters</h3>
 	      	
 	      	<form role="form" action="update-filters" method="get" name="filter-form" id="filter-form">
+	      		<h4>Sort by:</h4>
+	      		<div class="form-group">
+    			<select class="form-control" name="sort-type">
+    				<option>Soonest</option>
+    				<option>A to z</option>
+    				<option>Newest</option>
+    				<option>Price: low to high</option>
+    			</select>
+    		</div>
 	      		<h4>Categories:</h4>
 	      		<div class="checkbox">
 	      			<label><input type="checkbox" value="" name="Birthday">Birthday</label>

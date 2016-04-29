@@ -170,7 +170,7 @@
     	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBux1-zJMJGC5eMzSZI2ofmw_t06DuJajg&callback=initMap">
     </script>
     <script type="text/javascript">
-    $('#datepicker input').datepicker({
+    $('#datepicker').datepicker({
         todayHighlight: true
     });
     </script>

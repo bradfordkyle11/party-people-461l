@@ -20,7 +20,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Load;
 
 @Entity
-public class Event extends PartyPeopleObservable implements Comparable<Event>  {
+public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	public static final int SOONEST_DATE = 0;
 	public static final int ALPHABETICAL = 1;
 	public static final int CLOSEST_DISTANCE = 2;
@@ -30,8 +30,10 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 	private int sortType;
 	private String name = "";
 	@Embedded
-	@Load private Ref<PartyPeopleUser> owner;
-	@Load private List<Ref<PartyPeopleUser>> attending;
+	@Load
+	private Ref<PartyPeopleUser> owner;
+	@Load
+	private List<Ref<PartyPeopleUser>> attending;
 	private String location = "";
 	private double latitude;
 	private double longitude;
@@ -41,7 +43,8 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 	private boolean privateEvent;
 	private String password = "";
 	private double price;
-	@Load private List<Ref<Item>> itemsNeeded;
+	@Load
+	private List<Ref<Item>> itemsNeeded;
 	private String category = "";
 	private Date timeCreated;
 
@@ -55,9 +58,10 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 	}
 
 	public Event(PartyPeopleUser owner, String name, String description,
-			String category, String date, String time, String location, double latitude, double longitude,
-			String publicOrPrivate, String password, String price,
-			String itemsNeeded) {
+			String category, String date, String time, String location,
+			double latitude, double longitude, String publicOrPrivate,
+			String password, String price, String itemsNeeded) {
+		this.timeCreated = new Date();
 		this.owner = Ref.create(owner);
 		this.name = name;
 		this.description = description;
@@ -73,26 +77,26 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			String hour = time.substring(0,2);
-			String minute = time.substring(3,5);
-			
-			int numHours = Integer.parseInt(hour);
-			int numMinutes = Integer.parseInt(minute);
-			if (time.contains("P")){
-				if(numHours != 12)
-					numHours += 12;
-			}
-			else{									
-				if(numHours == 12){
-					numHours -= 12;
+
+			if (time != "") {
+				String hour = time.substring(0, 2);
+				String minute = time.substring(3, 5);
+
+				int numHours = Integer.parseInt(hour);
+				int numMinutes = Integer.parseInt(minute);
+				if (time.contains("P")) {
+					if (numHours != 12)
+						numHours += 12;
+				} else {
+					if (numHours == 12) {
+						numHours -= 12;
+					}
 				}
+
+				this.date.setHours(numHours);
+				this.date.setMinutes(numMinutes);
 			}
-			
-			this.date.setHours(numHours);
-			this.date.setMinutes(numMinutes); 
-			
-			
+
 		}
 
 		this.location = location;
@@ -107,13 +111,13 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 			this.price = Double.parseDouble(price);
 		}
 		this.itemsNeeded = new ArrayList<Ref<Item>>();
-		ArrayList<String> itemsNeededTemp = new ArrayList<String>(Arrays.asList(itemsNeeded
-				.split(",")));
-		while (itemsNeededTemp.contains("")){
+		ArrayList<String> itemsNeededTemp = new ArrayList<String>(
+				Arrays.asList(itemsNeeded.split(",")));
+		while (itemsNeededTemp.contains("")) {
 			itemsNeededTemp.remove("");
 		}
-		
-		for(String s : itemsNeededTemp){
+
+		for (String s : itemsNeededTemp) {
 			Item item = new Item(s, null);
 			this.itemsNeeded.add(Ref.create(item));
 		}
@@ -207,12 +211,12 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 		// figure out what changed and turn it into a string to
 		// pass to the observers, so it can be emailed.
 		notifyObservers(changed);
-//		clearChanged();
+		// clearChanged();
 
 	}
 
 	public void addAttendee(PartyPeopleUser u) {
-		if (attending==null){
+		if (attending == null) {
 			attending = new ArrayList<Ref<PartyPeopleUser>>();
 		}
 		Ref<PartyPeopleUser> attendee = Ref.create(u);
@@ -226,7 +230,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 	}
 
 	public void addComment(String content, PartyPeopleUser commenter) {
-		if (comments==null){
+		if (comments == null) {
 			comments = new ArrayList<Comment>();
 		}
 		comments.add(new Comment(content, commenter));
@@ -265,18 +269,18 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 	public void setAttending(List<Ref<PartyPeopleUser>> attending) {
 		this.attending = attending;
 	}
-	
+
 	public List<Item> getItemsNeeded() {
 		ArrayList<Item> itemsList = new ArrayList<Item>();
-		if (itemsNeeded != null){
-			for(Ref<Item> item : itemsNeeded){
+		if (itemsNeeded != null) {
+			for (Ref<Item> item : itemsNeeded) {
 				itemsList.add(item.safeGet());
 			}
 		}
 		return itemsList;
 	}
-	
-	public List<Ref<Item>> getItemsNeededRef(){
+
+	public List<Ref<Item>> getItemsNeededRef() {
 		return this.itemsNeeded;
 	}
 
@@ -309,7 +313,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 	}
 
 	public List<Comment> getComments() {
-		if (comments==null){
+		if (comments == null) {
 			comments = new ArrayList<Comment>();
 		}
 		return comments;
@@ -350,10 +354,10 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	
-	public boolean isAttending(PartyPeopleUser attendee){
+
+	public boolean isAttending(PartyPeopleUser attendee) {
 		List<PartyPeopleUser> attending = getAttending();
-		for (PartyPeopleUser att : attending){
+		for (PartyPeopleUser att : attending) {
 			String email = att.getGoogleUser().getEmail();
 		}
 		return attending.contains(attendee);
@@ -364,13 +368,20 @@ public class Event extends PartyPeopleObservable implements Comparable<Event>  {
 		// TODO Auto-generated method stub
 		switch (sortType) {
 		case SOONEST_DATE:
-			return date.compareTo(e.getDate());
+			if (this.date == null) {
+				return 1;
+			}
+			if (e.getDate() == null) {
+				return -1;
+			} else {
+				return date.compareTo(e.getDate());
+			}
 		case ALPHABETICAL:
 			return name.compareTo(e.getName());
 		case CLOSEST_DISTANCE:
 			return 0;
 		case TIME_CREATED:
-			return timeCreated.compareTo(e.getTimeCreated());
+			return -timeCreated.compareTo(e.getTimeCreated());
 		case PRICE:
 			return Double.compare(price, e.getPrice());
 		default:

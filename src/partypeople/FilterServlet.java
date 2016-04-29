@@ -65,6 +65,30 @@ public class FilterServlet extends HttpServlet {
 			}
 
 		}
+		
+		//create the sorting filter
+		//this one is last for optimization purposes
+		if (request.getParameter("sort-type")!=null){
+			int sortType;
+			switch (request.getParameter("sort-type")){
+			case "Soonest":
+				sortType = Event.SOONEST_DATE;
+				break;
+			case "A to z":
+				sortType = Event.ALPHABETICAL;
+				break;
+			case "Newest":
+				sortType = Event.TIME_CREATED;
+				break;
+			case "Price: low to high":
+				sortType = Event.PRICE;
+				break;
+			default:
+				sortType = 0;
+			}
+			
+			filter.addFilterBehavior(new SortingBehavior(sortType));
+		}
 
 		// return the filter
 		request.setAttribute("filter", filter);
