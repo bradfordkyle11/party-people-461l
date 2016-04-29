@@ -21,23 +21,23 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.capabilities.Capability;
-import com.google.appengine.api.capabilities.CapabilityStatus;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.tools.development.testing.LocalCapabilitiesServiceTestConfig;
+import com.google.appengine.api.users.User;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.apphosting.api.ApiProxy;
+import com.google.appengine.tools.development.testing.
 
 public class ObserverTest {
 	ArrayList<Event> events = new ArrayList<Event>();
 	PartyPeopleUser c = new PartyPeopleUser(new User("test3@gmail.com", "gmail.com"));
-	 private final LocalServiceTestHelper helper =
-			    new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+	private final LocalServiceTestHelper helper =
+		      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+
 	
 	@Before
 	public void setUp() {
