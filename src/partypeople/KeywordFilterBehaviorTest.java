@@ -17,28 +17,24 @@ public class KeywordFilterBehaviorTest {
 	ArrayList<Event> correct3;
 	@Before
 	public void setup(){
-		PartyPeopleUser fakeUser = new PartyPeopleUser(new User("fake@email.com", "gmail.com"));
 		
 		Event e1 = new Event();
 		e1.setCategory("Social");
 		e1.setDescription("Anyone is welcome! This is just a fun social get-together. Please bring an item on the list if you plan to come.");
 		e1.setLocation("101 Fake Street St., Austin, TX");
 		e1.setName("Johnny's Party");
-		e1.setOwner(fakeUser);
 		
 		Event e2 = new Event();
 		e2.setCategory("Music");
 		e2.setDescription("Hey guys, come join us for a free party and concert. Food and drinks provided.");
 		e2.setLocation("102 Fake Street St., Austin, TX");
 		e2.setName("Concert");
-		e2.setOwner(fakeUser);
 		
 		Event e3 = new Event();
 		e3.setCategory("Graduation");
 		e3.setDescription("Come celebrate my college graduation.");
 		e3.setLocation("103 Fake Street St., Austin, TX");
 		e3.setName("Johnny's Graduation");
-		e3.setOwner(fakeUser);
 		
 		events = new ArrayList<Event>();
 		events.add(e1);
