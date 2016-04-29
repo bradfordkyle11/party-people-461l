@@ -199,7 +199,7 @@
 	    						else {
 	    							%>
 	    							<div class="checkbox">
-				      					<label><input type="checkbox" value="" name="<%="item" + String.valueOf(i)%>"><%=neededItem.getName()%></label>
+				      					<label><input type="checkbox" value="" name="<%="item" + String.valueOf(i)%>" checked="true" disabled><%=neededItem.getName()%></label>
 				      					<input type="hidden" value="<%=String.valueOf(neededItem.getId())%>" name="<%="id" + String.valueOf(i)%>"></input>
 				      				</div>
 	    							<%
@@ -209,7 +209,6 @@
     							<div class="checkbox">
 			      					<label><input type="checkbox" value="" name="<%="item" + String.valueOf(i)%>" checked="true" disabled><%=neededItem.getName()%></label>
 			      					<input type="hidden" value="" name="<%="item" + String.valueOf(i)%>">
-			      					<input type="hidden" value="<%=String.valueOf(neededItem.getId())%>" name="<%="id" + String.valueOf(i)%>"></input>
 			      				</div>
     							<%
 	    					}
