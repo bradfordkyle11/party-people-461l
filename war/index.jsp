@@ -10,6 +10,17 @@
 
 <html lang="en">
   <head>
+  <style>
+ 	 p1.italic {
+   	 font-size: 75%;
+   	 font-style: italic;
+	}
+	
+	p2.thick {
+		
+		font-weight: bold;
+	}
+  </style>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -151,8 +162,10 @@
 	    	    	<div class="well well-sm">
 			        <h2><a href="#" onclick="$(this).closest('form').submit()">${party_name}</a></h2>
 			        </form>
-			        <p>${category}</p>
-			        <p>${location}</p>
+			        <p1 class=italic>${category}<br><br></p1>
+			        
+			        <p2 class=thick>${location}<br><br></p2>
+
 			        <p>${description}</p>
 			        
 			        <!-- Button for RSVPing or deciding not to come -->

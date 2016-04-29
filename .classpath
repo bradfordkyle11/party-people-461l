@@ -5,6 +5,9 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry exported="true" kind="lib" path="objectify-4.0b1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Travis/Desktop/appengine-testing-1.4.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Travis/Desktop/appengine-testing.jar/appengine-testing.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Travis/Desktop/appengine-api-1.2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Travis/Desktop/appengine-api-stubs-1.8.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Travis/Desktop/appengine-tools-sdk-1.8.3.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
