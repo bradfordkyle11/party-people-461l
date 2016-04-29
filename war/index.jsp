@@ -162,11 +162,24 @@
 	    	    	<div class="well well-sm">
 			        <h2><a href="#" onclick="$(this).closest('form').submit()">${party_name}</a></h2>
 			        </form>
-			        <p1 class=italic>${category}<br><br></p1>
-			        
-			        <p2 class=thick>${location}<br><br></p2>
 
-			        <p>${description}</p>
+			        
+			        <p1 class=italic>${category}<br><br></p1>
+			       	<div class="row">
+      					<div class="col-xs-8 col-sm-6">
+        		        <p>${description}</p>
+     					 </div>
+     					 <div class="col-xs-8 col-sm-6">
+     					 
+     					 <p><strong>When: </strong> <!--  ${date}--></p>
+     					 <p><strong>Where:</strong> ${location}</p>
+     					 <p><strong>Cost:</strong> ${price}</p>
+			        	</div>
+			        </div>
+			        	
+			        
+
+	
 			        
 			        <!-- Button for RSVPing or deciding not to come -->
 			        <form role="form" method="post" action="rsvp">
