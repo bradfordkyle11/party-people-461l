@@ -114,6 +114,8 @@
 				%>
 			</div>
 			<div class="col-sm-4">
+			
+			<!-- Searching form -->
 				<form role="form" method="get" action="update-filters">
 
 					<div class="input-group">
@@ -227,7 +229,7 @@
 	      	<form role="form" action="update-filters" method="get" name="filter-form" id="filter-form">
 	      		<h4>Sort by:</h4>
 	      		<div class="form-group">
-    			<select class="form-control" name="sort-type">
+    			<select class="form-control" id="sort-type" name="sort-type">
     				<option>Soonest</option>
     				<option>A to z</option>
     				<option>Newest</option>
@@ -236,36 +238,36 @@
     		</div>
 	      		<h4>Categories:</h4>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Birthday">Birthday</label>
+	      			<label><input type="checkbox" value="" id="Birthday" name="Birthday">Birthday</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Graduation">Graduation</label>
+	      			<label><input type="checkbox" value="" id="Graduation" name="Graduation">Graduation</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Sports">Sports</label>
+	      			<label><input type="checkbox" value="" id="Sports" name="Sports">Sports</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Holiday">Holiday</label>
+	      			<label><input type="checkbox" value="" id="Holiday" name="Holiday">Holiday</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Social">Social</label>
+	      			<label><input type="checkbox" value="" id="Social" name="Social">Social</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Music">Music</label>
+	      			<label><input type="checkbox" value="" id="Music" name="Music">Music</label>
 	      		</div>
 	 			<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Pool Party">Pool Party</label>
+	      			<label><input type="checkbox" value="" id="Pool Party" name="Pool Party">Pool Party</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="other">Other</label>
+	      			<label><input type="checkbox" value="" id="Other" name="Other">Other</label>
       			</div>
 	      		<h4>Date Range:</h4>
 	      		<div class="input-daterange input-group" data-provide="datepicker" id="datepicker">
-    				<input type="text" class="input-sm form-control" name="start" />
+    				<input type="text" class="input-sm form-control" id="start" name="start" />
     				<span class="input-group-addon">to</span>
-   			 		<input type="text" class="input-sm form-control" name="end" />
+   			 		<input type="text" class="input-sm form-control" id="end" name="end" />
 				</div>
-				<h4>Distance</h4>
+				<h4>Distance:</h4>
 				<div class="form-group">
 	    			<label class="control-label" for="radius">Radius (in mi.):</label>
 	    			<input type="number" class="form-control" name="radius" id="radius" placeholder="Enter radius in miles">
@@ -338,6 +340,86 @@
 	</script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBux1-zJMJGC5eMzSZI2ofmw_t06DuJajg&callback=initMap"
     async defer></script>
+    
+    <!-- This script can be used to get request parameters with Javascript -->
+    <script>
+    function getQueryParameter ( parameterName ) {
+    	  var queryString = window.top.location.search.substring(1);
+    	  var parameterName = parameterName + "=";
+    	  if ( queryString.length > 0 ) {
+    	    begin = queryString.indexOf ( parameterName );
+    	    if ( begin != -1 ) {
+    	      begin += parameterName.length;
+    	      end = queryString.indexOf ( "&" , begin );
+    	        if ( end == -1 ) {
+    	        end = queryString.length
+    	      }
+    	        
+    	      var temp =  unescape ( queryString.substring ( begin, end ) );
+    	      var result = temp.replace(/\+/g, " ");
+    	      return result;
+    	    }
+    	  }
+    	  return "null";
+    	}
+    </script>
+    
+    <!-- This script will update the filter and search forms based on submitted data -->
+    <script type="text/javascript">
+    	//set search value
+    	if (getQueryParameter("query")!="null"){
+    		document.getElementById("search").value = getQueryParameter("query");
+    	}
+    	
+    	//set sort type
+    	if (getQueryParameter("sort-type")!="null"){
+    		document.getElementById("sort-type").value = getQueryParameter("sort-type");
+    	}
+    	
+    	//set categories
+    	if (getQueryParameter("Birthday")!="null"){
+    		document.getElementById("Birthday").checked = true;
+    	}
+    	if (getQueryParameter("Graduation")!="null"){
+    		document.getElementById("Graduation").checked = true;
+    	}
+    	if (getQueryParameter("Sports")!="null"){
+    		document.getElementById("Sports").checked = true;
+    	}
+    	if (getQueryParameter("Holiday")!="null"){
+    		document.getElementById("Holiday").checked = true;
+    	}
+    	if (getQueryParameter("Social")!="null"){
+    		document.getElementById("Social").checked = true;
+    	}
+    	if (getQueryParameter("Music")!="null"){
+    		document.getElementById("Music").checked = true;
+    	}
+    	if (getQueryParameter("Pool Party")!="null"){
+    		document.getElementById("Pool Party").checked = true;
+    	}
+    	if (getQueryParameter("Other")!="null"){
+    		document.getElementById("Other").checked = true;
+    	}
+    	
+    	//set date range
+    	if (getQueryParameter("start")!="null"){
+    		document.getElementById("start").value = getQueryParameter("start");
+    	}
+    	if (getQueryParameter("end")!="null"){
+    		document.getElementById("end").value = getQueryParameter("end");
+    	}
+    	
+    	//set distance filter
+    	if (getQueryParameter("radius")!="null"){
+    		document.getElementById("radius").value = getQueryParameter("radius");
+    	}
+    	if (getQueryParameter("location")!="null"){
+    		document.getElementById("location").value = getQueryParameter("location");
+    	}
+    	
+    	
+    </script>
 
 
   </body>
