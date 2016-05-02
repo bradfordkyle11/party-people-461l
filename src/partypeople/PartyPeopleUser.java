@@ -99,6 +99,9 @@ public class PartyPeopleUser implements PartyPeopleObserver {
 		}
 		return created;
 	}
+	public void removeCreated(Event event){
+		myCreated.remove(Ref.create(event));
+	}
 	public void addAttending(Event event){
 		myAttending.add(Ref.create(event));
 	}

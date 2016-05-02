@@ -39,7 +39,8 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	private double longitude;
 	private Date date;
 	private String description = "";
-	@Load private List<Ref<Comment>> comments;
+	@Load
+	private List<Ref<Comment>> comments;
 	private boolean privateEvent;
 	private String password = "";
 	private double price;
@@ -237,9 +238,9 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		StorageHandler.save(newComment);
 		comments.add(Ref.create(newComment));
 	}
-	
-	public void addComment(Comment comment){
-		if (comments == null){
+
+	public void addComment(Comment comment) {
+		if (comments == null) {
 			comments = new ArrayList<Ref<Comment>>();
 		}
 		comments.add(Ref.create(comment));
@@ -324,16 +325,16 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	public List<Comment> getComments() {
 		ArrayList<Comment> result = new ArrayList<Comment>();
 		if (comments != null) {
-			for (Ref<Comment> comment : comments){
+			for (Ref<Comment> comment : comments) {
 				result.add(comment.safeGet());
 			}
 		}
-		
+
 		return result;
 	}
-	
-	public List<Ref<Comment>> getRefComments(){
-		if (comments==null){
+
+	public List<Ref<Comment>> getRefComments() {
+		if (comments == null) {
 			comments = new ArrayList<Ref<Comment>>();
 		}
 		return comments;
@@ -341,7 +342,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 
 	public void setComments(List<Comment> comments) {
 		ArrayList<Ref<Comment>> updatedComments = new ArrayList<Ref<Comment>>();
-		for (Comment comment : comments){
+		for (Comment comment : comments) {
 			updatedComments.add(Ref.create(comment));
 		}
 		this.comments = updatedComments;
@@ -455,6 +456,27 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 
 	public boolean equals(Event other) {
 		return this.id == other.getId();
+	}
+
+	public void prepareForDelete() {
+		owner.safeGet().removeCreated(this);
+		StorageHandler.save(owner.safeGet());
+		if (attending != null) {
+			for (Ref<PartyPeopleUser> attendee : attending) {
+				attendee.safeGet().removeAttending(this);
+				StorageHandler.save(attendee.safeGet());
+			}
+		}
+		if (itemsNeeded != null) {
+			for (Ref<Item> item : itemsNeeded) {
+				StorageHandler.delete(item.safeGet());
+			}
+		}
+		if (comments != null){
+			for (Ref<Comment> comment : comments){
+				StorageHandler.delete(comment.safeGet());
+			}
+		}
 	}
 
 }

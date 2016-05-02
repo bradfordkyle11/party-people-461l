@@ -279,7 +279,7 @@
    				for(Comment comment : comments){
    			%>
    				<div class="well well-sm">
-   					<p><%=partyPeopleUser.toString() + " wrote on " + comment.getTimePosted().toString() %></p>
+   					<p><%=comment.getCommenter().toString() + " wrote on " + comment.getTimePosted().toString() %></p>
    					<p><%=comment.getContent() %>
    				</div>
    				<%

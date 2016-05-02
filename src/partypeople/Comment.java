@@ -10,7 +10,7 @@ import com.googlecode.objectify.annotation.Load;
 @Entity
 public class Comment implements Comparable<Comment> {
 	private String content;
-	private Ref<PartyPeopleUser> commenter;
+	@Load private Ref<PartyPeopleUser> commenter;
 	private Date timePosted;
 	@Load private Ref<Event> associatedEvent;
 	@Id Long id;

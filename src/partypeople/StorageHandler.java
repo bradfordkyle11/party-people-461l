@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.Ref;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
@@ -25,6 +26,25 @@ public class StorageHandler {
 	public static void delete(Comment c){
 		c.getAssociatedEvent().removeComment(c);
 		ofy().delete().entity(c).now();
+	}
+	public static void delete(Event e){
+		//e.prepareForDelete();
+		e.getOwner().removeCreated(e);
+		save(e.getOwner());
+
+		for (PartyPeopleUser attendee : e.getAttending()) {
+			attendee.removeAttending(e);
+			save(attendee);
+		}
+
+		for (Item item : e.getItemsNeeded()) {
+			delete(item);
+		}
+		for (Comment comment : e.getComments()) {
+			delete(comment);
+		}
+
+		ofy().delete().entity(e).now();
 	}
 	
 	public static PartyPeopleUser getUser(User user){

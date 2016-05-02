@@ -60,6 +60,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	    <servlet-name>ItemSignUpServlet</servlet-name>
 	    <url-pattern>/item-sign-up</url-pattern>
 	</servlet-mapping>
+	<servlet>
+	    <servlet-name>DeletePartyServlet</servlet-name>
+	    <servlet-class>partypeople.DeletePartyServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>DeletePartyServlet</servlet-name>
+	    <url-pattern>/delete-party</url-pattern>
+	</servlet-mapping>
 
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
