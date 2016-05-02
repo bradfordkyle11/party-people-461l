@@ -170,19 +170,18 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 
 	public void updateEvent(Event newEvent) {
 		ArrayList<String> changed = new ArrayList<String>();
-		boolean hasChanged = false;
 		changed.add(this.name);
 		if (!this.name.equals(newEvent.getName())
 				&& !(newEvent.getName() == null)) {
 			changed.add("Event Name");
 			this.name = newEvent.getName();
-			hasChanged = true;
+			
 		}
 		if (!this.owner.equals(newEvent.getOwner())
 				&& !(newEvent.getOwner() == null)) {
 			changed.add("Host");
 			this.owner = Ref.create(newEvent.getOwner());
-			hasChanged = true;
+			setChanged();
 		}
 		if (!this.location.equals(newEvent.getLocation())
 				&& !(newEvent.getLocation() == null)) {
@@ -190,7 +189,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 			this.location = newEvent.getLocation();
 			this.latitude = newEvent.getLatitude();
 			this.longitude = newEvent.getLongitude();
-			hasChanged = true;
+			setChanged();
 		}
 		if (!this.date.equals(newEvent.getDate())
 				&& !(newEvent.getDate() == null)) {
@@ -198,12 +197,12 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 			this.date = newEvent.getDate();
 			this.dateString = newEvent.getDateString();
 			this.timeString = newEvent.getTimeString();
-			hasChanged = true;
+			setChanged();
 		}
 		if (this.price != newEvent.getPrice()) {
 			changed.add("Price");
 			this.price = newEvent.getPrice();
-			hasChanged = true;
+			setChanged();
 		}
 		this.description = newEvent.getDescription();
 		this.privateEvent = newEvent.isPrivateEvent();
@@ -219,9 +218,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 
 		this.category = newEvent.getCategory();
 
-		if (hasChanged) {
-			setChanged();
-		}
+		
 
 		// figure out what changed and turn it into a string to
 		// pass to the observers, so it can be emailed.
