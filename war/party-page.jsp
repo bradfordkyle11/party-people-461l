@@ -67,15 +67,16 @@
             PartyPeopleUser partyPeopleUser = new PartyPeopleUser();
             if (user!=null) {
             	partyPeopleUser = StorageHandler.getUser(user);
+            	pageContext.setAttribute("partyPeopleUser", partyPeopleUser);
             	if (partyPeopleUser==null){
             		partyPeopleUser = new PartyPeopleUser(user);
             		StorageHandler.save(partyPeopleUser);
             	}
             %>
-            <li><a href="<%= userService.createLogoutURL("/") %>">Logout</a>
+            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout (You are logged in as <%=user.getEmail()%>)</a>
             <%} else {
             %>
-            <li><a href="<%= userService.createLoginURL("/") %>">Login</a>
+            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login with Google</a>
             <%
             }
             %>

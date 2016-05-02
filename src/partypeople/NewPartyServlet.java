@@ -49,13 +49,24 @@ public class NewPartyServlet extends HttpServlet {
 		}
 		String price = request.getParameter("price");
 		String itemsNeeded = request.getParameter("items-needed");
+		
+		String action = request.getParameter("action");
+		
 
 		Event newEvent = new Event(owner, name, description, category, date,
 				time, location, latitude, longitude, publicOrPrivate, password, price, itemsNeeded);
-		StorageHandler.save(newEvent);
-		owner.addCreated(newEvent);
-		StorageHandler.save(owner);
-
+		if (action.equals("new")){
+			StorageHandler.save(newEvent);
+			owner.addCreated(newEvent);
+			StorageHandler.save(owner);
+		}
+		else {
+			Long id = Long.parseLong(request.getParameter("id"));
+			Event oldEvent = StorageHandler.findEventById(id);
+			oldEvent.updateEvent(newEvent);
+			StorageHandler.save(oldEvent);
+		}
+		
 		response.sendRedirect("/index.jsp");
 	}
 }

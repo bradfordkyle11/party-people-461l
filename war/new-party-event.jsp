@@ -34,13 +34,45 @@
   </head>
 
   <body>
-      <script src="/js/externalJquery.js" type="text/javascript"></script>
+
 	<%
 	//get current user
 		UserService userService = UserServiceFactory.getUserService();
     	User user = userService.getCurrentUser();
     	if (user!=null){
     		pageContext.setAttribute("user", user);
+    	}
+    	
+    	//if editing an event, event will not be null
+    	Event event = null;
+    	String name = "";
+    	String description = "";
+    	String category = "";
+    	String date = "";
+    	String time = "";
+    	String location = "";
+    	boolean isPrivate = false;
+    	String password = "";
+    	String price = "0";
+    	String itemsNeeded = "";
+    	String editing = "false";
+    	if (request!=null){
+	    	if (request.getAttribute("event")!=null){
+	    		
+	    		//set the values to be grabbed by script later
+	    		event = (Event) request.getAttribute("event");
+	    		editing = "true";
+	    		name = event.getName();
+	    		description = event.getDescription();
+	    		category = event.getCategory();
+	    		date = event.getDateString();
+	    		time = event.getTimeString();
+	    		location = event.getLocation();
+	    		isPrivate = event.isPrivateEvent();
+	    		password = event.getPassword();
+	    		price = String.valueOf(event.getPrice());
+	    		itemsNeeded = event.getItemsNeededString();
+	    	}
     	}
     %>
     <!-- Static navbar -->
@@ -62,17 +94,19 @@
             <li><a href="#about">About</a></li>
             
             <%
+            PartyPeopleUser partyPeopleUser = new PartyPeopleUser();
             if (user!=null) {
-            	PartyPeopleUser partyPeopleUser = StorageHandler.getUser(user);
+            	partyPeopleUser = StorageHandler.getUser(user);
+            	pageContext.setAttribute("partyPeopleUser", partyPeopleUser);
             	if (partyPeopleUser==null){
             		partyPeopleUser = new PartyPeopleUser(user);
             		StorageHandler.save(partyPeopleUser);
             	}
             %>
-            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout</a>
+            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout (You are logged in as <%=user.getEmail()%>)</a>
             <%} else {
             %>
-            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login</a>
+            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login with Google</a>
             <%
             }
             %>
@@ -82,19 +116,33 @@
     </nav>
     
     <div class="container">
-    	<h1>Create a new party event:</h1>
+    	<h1 id="page-title">Create a new party event:</h1>
+    	
+    	<!-- form for entering party info -->
     	<form id="new-party-form" name="new-party-form" role="form" action="new-party" method="post" onsubmit="onSubmit()">
+    		
+    		<!-- value is "new" if creating new party, "edit" if editing one -->
+    		<input type="hidden" id="action" name="action" value="new">
+    		
+    		<%
+    		if (event!=null){
+    			%>
+    			<input type="hidden" name="id" id="id" value="<%=String.valueOf(event.getId())%>">
+    			<%
+    		}
+    		%>
+    		
     		<div id="party-name-form-group" class="form-group">
     			<label class="control-label" for="party-name">Party name:</label>
     			<input type="text" class="form-control" id="party-name" name="party-name" placeholder="Enter the name of the party">
     		</div>
     		<div class="form-group">
     			<label class="control-label" for="description">Description:</label>
-	      	  	<textarea class="form-control" name="description" placeholder="Enter description" rows="3"></textarea>
+	      	  	<textarea class="form-control" id="description" name="description" placeholder="Enter description" rows="3"></textarea>
     		</div>
     		<div class="form-group">
     			<label class="control-label" for="category">Category:</label>
-    			<select class="form-control" name="category" placeholder="Select category">
+    			<select class="form-control" id="category" name="category" placeholder="Select category">
     				<option>Birthday</option>
     				<option>Graduation</option>
     				<option>Sports</option>
@@ -108,17 +156,19 @@
     		<div class="form-group" id="date-form-group">
     			<label class="control-label" for ="date">Date:</label>
     			<div class="input-group date" data-provide="datepicker" id="datepicker">
-					<input name="date" type="text" class="form-control" placeholder="Enter date"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+					<input id="date" name="date" type="text" class="form-control" placeholder="Enter date"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
 				</div>
     		</div>
     		<div class="form-group">
     			<label class="control-label" for="time">Time:</label>
-    			<input type="time" class="form-control" name="time" placeholder="Enter time">
+    			<input type="time" class="form-control" id="time" name="time" placeholder="Enter time">
     		</div>
     		<div class="form-group">
     			<label class="control-label" for="location">Location:</label>
     			<input type="text" class="form-control" name="location" id="location" placeholder="Enter location">
     		</div>
+    		
+    		<!-- This will be set by geocoding the value in the location input once the form is submitted -->
     		<input type="hidden" value="" name="latlong" id="latlong">
     		<div class="form-group">
     			<label class="control-label" for="public-or-private">Public or private:</label>
@@ -129,21 +179,21 @@
     		</div>
     		<div id="password-form-group" class="form-group">
     			<label class="control-label" for="password">Password:</label>
-    			<input type="password" class="form-control" name="password" placeholder="Enter password" disabled>
+    			<input type="password" class="form-control" id="password" name="password" placeholder="Enter password" disabled>
     		</div>
     		<div id="password-confirmation-form-group" class="form-group">
     			<label class="control-label" for="password-confirmation">Confirm password:</label>
-    			<input type="password" class="form-control" name="password-confirmation" placeholder="Confirm password" disabled>
+    			<input type="password" class="form-control" id="password-confirmation" name="password-confirmation" placeholder="Confirm password" disabled>
     		</div>
     		<div class="form-group">
     			<label class="control-label" for="price">Price:</label>
-    			<input type="number" class="form-control" name="price" placeholder="Enter price">
+    			<input type="number" class="form-control" id="price" name="price" placeholder="Enter price">
     		</div>
     		<div class="form-group">
     			<label class="control-label" for="items-needed">Items needed:</label>
-    			<textarea class="form-control" name="items-needed" rows="3" placeholder="Enter items needed separated by commas"></textarea>
+    			<textarea class="form-control" id="items-needed" name="items-needed" rows="3" placeholder="Enter items needed separated by commas"></textarea>
     		</div>
-    		<button class="btn btn-primary" type="button" onclick="submitForm()">Create party</button>
+    		<button class="btn btn-primary" type="button" onclick="submitForm()" id="submit-button">Create party</button>
     		<div id="floating-panel">
 
     		
@@ -165,6 +215,7 @@
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="js/bootstrap-datepicker.js"></script>
+          <script src="/js/externalJquery.js"></script>
 
 	<script async defer
     	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBux1-zJMJGC5eMzSZI2ofmw_t06DuJajg&callback=initMap">
@@ -238,6 +289,48 @@
           }
         });
       }
+	</script>
+	
+	<!-- This script restores input values from party being edited -->
+	<script type="text/javascript">
+	var editing = "<%=editing%>";
+	if (editing=="true"){
+		document.getElementById("action").value = "edit";
+		document.getElementById("page-title").innerHTML = "Edit party event:"
+		var partyName = "<%=name%>";
+		document.getElementById("party-name").value = partyName;
+		var partyDescription = "<%=description%>";
+		document.getElementById("description").value = partyDescription;
+		var partyCategory = "<%=category%>";
+		document.getElementById("category").value = partyCategory;
+		var partyDate = "<%=date%>";
+		document.getElementById("date").value = partyDate;
+		var partyTime = "<%=time%>";
+		document.getElementById("time").value = partyTime;
+		var partyLocation = "<%=location%>";
+		document.getElementById("location").value = partyLocation;
+		var isPrivate = "<%=isPrivate%>";
+		if (isPrivate==true){
+			document.getElementById("public-or-private").value = "Private";
+			document.getElementById("password").disabled = false;
+			document.getElementById("password-confirmation").disabled = false;
+		}
+		else {
+			document.getElementById("public-or-private").value = "Public";
+		}
+		var password = "<%=password%>";
+		document.getElementById("password").value = password;
+		document.getElementById("password-confirmation").value = password;
+		var price = "<%=price%>";
+
+		document.getElementById("price").value = price;
+		var itemsNeeded = "<%=itemsNeeded%>";
+		document.getElementById("items-needed").value = itemsNeeded;
+		
+		document.getElementById("submit-button").innerHTML = "Update party";
+		
+		
+	}
 	</script>
 
 

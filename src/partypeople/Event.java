@@ -48,6 +48,12 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	private List<Ref<Item>> itemsNeeded;
 	private String category = "";
 	private Date timeCreated;
+	
+	
+	//these are used to more easily set the input fields when editing an event
+	private String dateString;
+	private String timeString;
+	private String itemsNeededString;
 
 	@Id
 	Long id;
@@ -68,6 +74,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		this.description = description;
 		this.category = category;
 		if (date != null) {
+			this.dateString = date;
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(0);
 			this.date = cal.getTime();
@@ -80,6 +87,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 			}
 
 			if (time != "") {
+				timeString = time;
 				String hour = time.substring(0, 2);
 				String minute = time.substring(3, 5);
 
@@ -104,13 +112,14 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		if (publicOrPrivate != null) {
-			this.privateEvent = publicOrPrivate.equals("private");
+			this.privateEvent = publicOrPrivate.equals("Private");
 		}
 		this.password = password;
 
 		if (!price.equals("")) {
 			this.price = Double.parseDouble(price);
 		}
+		this.itemsNeededString = itemsNeeded;
 		this.itemsNeeded = new ArrayList<Ref<Item>>();
 		ArrayList<String> itemsNeededTemp = new ArrayList<String>(
 				Arrays.asList(itemsNeeded.split(",")));
@@ -179,12 +188,16 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 				&& !(newEvent.getLocation() == null)) {
 			changed.add("Location");
 			this.location = newEvent.getLocation();
+			this.latitude = newEvent.getLatitude();
+			this.longitude = newEvent.getLongitude();
 			hasChanged = true;
 		}
 		if (!this.date.equals(newEvent.getDate())
 				&& !(newEvent.getDate() == null)) {
 			changed.add("Date");
 			this.date = newEvent.getDate();
+			this.dateString = newEvent.getDateString();
+			this.timeString = newEvent.getTimeString();
 			hasChanged = true;
 		}
 		if (this.price != newEvent.getPrice()) {
@@ -193,17 +206,18 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 			hasChanged = true;
 		}
 		this.description = newEvent.getDescription();
-		this.comments = newEvent.getRefComments();
 		this.privateEvent = newEvent.isPrivateEvent();
 		this.password = newEvent.getPassword();
-		this.itemsNeeded = newEvent.getItemsNeededRef();
-		this.category = newEvent.getCategory();
-
-		this.attending.clear();
-		List<PartyPeopleUser> attendees = newEvent.getAttending();
-		for (PartyPeopleUser attendee : attendees) {
-			this.attending.add(Ref.create(attendee));
+		
+		//items have only changed if the input string for items needed is different
+		if (!this.itemsNeededString.equals(newEvent.getItemsNeededString())){
+			for (Ref<Item> item : this.itemsNeeded){
+				StorageHandler.delete(item.safeGet());
+			}
+			this.itemsNeeded = newEvent.getItemsNeededRef();
 		}
+
+		this.category = newEvent.getCategory();
 
 		if (hasChanged) {
 			setChanged();
@@ -352,6 +366,30 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		return privateEvent;
 	}
 
+	public String getDateString() {
+		return dateString;
+	}
+
+	public void setDateString(String dateString) {
+		this.dateString = dateString;
+	}
+
+	public String getTimeString() {
+		return timeString;
+	}
+
+	public void setTimeString(String timeString) {
+		this.timeString = timeString;
+	}
+
+	public String getItemsNeededString() {
+		return itemsNeededString;
+	}
+
+	public void setItemsNeededString(String itemsNeededString) {
+		this.itemsNeededString = itemsNeededString;
+	}
+
 	public void setPrivateEvent(boolean privateEvent) {
 		this.privateEvent = privateEvent;
 	}
@@ -458,25 +496,5 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		return this.id == other.getId();
 	}
 
-	public void prepareForDelete() {
-		owner.safeGet().removeCreated(this);
-		StorageHandler.save(owner.safeGet());
-		if (attending != null) {
-			for (Ref<PartyPeopleUser> attendee : attending) {
-				attendee.safeGet().removeAttending(this);
-				StorageHandler.save(attendee.safeGet());
-			}
-		}
-		if (itemsNeeded != null) {
-			for (Ref<Item> item : itemsNeeded) {
-				StorageHandler.delete(item.safeGet());
-			}
-		}
-		if (comments != null){
-			for (Ref<Comment> comment : comments){
-				StorageHandler.delete(comment.safeGet());
-			}
-		}
-	}
 
 }
