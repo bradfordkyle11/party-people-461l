@@ -158,7 +158,7 @@
 	    			pageContext.setAttribute("party_name", event.getName());
 	    			pageContext.setAttribute("description", event.getDescription());
 	    			pageContext.setAttribute("category", event.getCategory());
-	    			pageContext.setAttribute("date", event.getDate().toString());
+	    			pageContext.setAttribute("date", event.getFormattedDate());
 	    			pageContext.setAttribute("location", event.getLocation());
 	    			DecimalFormat numberFormat = new DecimalFormat("'$'#0.00");
 	    			pageContext.setAttribute("price", numberFormat.format(event.getPrice()));

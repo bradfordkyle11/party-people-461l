@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
+import java.util.TimeZone;
 
 import javax.persistence.Embedded;
 
@@ -61,6 +63,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 
 	public Event() {
 		timeCreated = new Date();
+		
 	}
 
 	public Event(PartyPeopleUser owner, String name, String description,
@@ -74,10 +77,20 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		this.category = category;
 		if (date != null) {
 			this.dateString = date;
-			Calendar cal = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("America/Chicago"));
 			cal.setTimeInMillis(0);
 			this.date = cal.getTime();
-			DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+			DateFormat dateFormat;
+			if (time != ""){
+				timeString = time;
+				date += " " + time;
+				dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm");
+				dateFormat.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
+			}
+			else {
+				dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+				dateFormat.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
+			}
 			try {
 				this.date = dateFormat.parse(date);
 			} catch (ParseException e) {
@@ -85,7 +98,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 				e.printStackTrace();
 			}
 
-			if (time != "") {
+			/*if (time != "") {
 				timeString = time;
 				String hour = time.substring(0, 2);
 				String minute = time.substring(3, 5);
@@ -103,7 +116,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 
 				this.date.setHours(numHours);
 				this.date.setMinutes(numMinutes);
-			}
+			}*/
 
 		}
 
@@ -322,6 +335,12 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 
 	public Date getDate() {
 		return date;
+	}
+	
+	public String getFormattedDate(){
+		DateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy 'at' hh:mm a z");
+		sdf.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
+		return (sdf.format(date));
 	}
 
 	public void setDate(Date date) {

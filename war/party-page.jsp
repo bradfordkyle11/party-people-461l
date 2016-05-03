@@ -203,7 +203,7 @@
 			if (((Event)request.getAttribute("event")).getDate()!=null){
 				%>
 				<div>
-    				<p name="date-and-time"><%="Date and Time: " + ((Event)request.getAttribute("event")).getDate().toString()%></p>
+    				<p name="date-and-time"><%="Date and Time: " + ((Event)request.getAttribute("event")).getFormattedDate()%></p>
     			</div>
 				<%
 			}

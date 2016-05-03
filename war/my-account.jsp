@@ -24,7 +24,7 @@
     
     <link href="css/bootstrap-datepicker.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link id="bsdp-css" href="css/datepicker3.css" rel="stylesheet">
+    
     
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -102,7 +102,7 @@
 	    			pageContext.setAttribute("party_name", event.getName());
 	    			pageContext.setAttribute("description", event.getDescription());
 	    			pageContext.setAttribute("category", event.getCategory());
-	    			pageContext.setAttribute("date", event.getDate().toString());
+	    			pageContext.setAttribute("date", event.getFormattedDate());
 	    			pageContext.setAttribute("location", event.getLocation());
 	    			DecimalFormat numberFormat = new DecimalFormat("'$'#0.00");
 	    			pageContext.setAttribute("price", numberFormat.format(event.getPrice()));
@@ -182,7 +182,7 @@
 	    			pageContext.setAttribute("party_name", event.getName());
 	    			pageContext.setAttribute("description", event.getDescription());
 	    			pageContext.setAttribute("category", event.getCategory());
-	    			pageContext.setAttribute("date", event.getDate().toString());
+	    			pageContext.setAttribute("date", event.getFormattedDate());
 	    			pageContext.setAttribute("location", event.getLocation());
 	    			DecimalFormat numberFormat = new DecimalFormat("'$'#0.00");
 	    			pageContext.setAttribute("price", numberFormat.format(event.getPrice()));
