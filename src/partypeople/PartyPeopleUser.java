@@ -1,9 +1,9 @@
 package partypeople;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -22,6 +22,7 @@ import com.googlecode.objectify.annotation.Load;
 
 @Entity
 public class PartyPeopleUser implements PartyPeopleObserver {
+	private static final Logger log = Logger.getLogger(PartyPeopleUser.class.getName());
 	private User googleUser;
 	@Load private List<Ref<Event>> myAttending;
 	@Load private List<Ref<Event>> myCreated;
@@ -42,6 +43,7 @@ public class PartyPeopleUser implements PartyPeopleObserver {
 	@Override
 	public void update(PartyPeopleObservable event, Object ob) {
 		Event ev = (Event) event;
+		log.info(ev.getName() + " is the new event name");
 		ArrayList<String> changed = (ArrayList<String>) ob;
 		String msgBody = "The event " + changed.get(0)
 				+ " has been changed. The following item(s) changed:\r\n";
@@ -59,6 +61,9 @@ public class PartyPeopleUser implements PartyPeopleObserver {
 			msg.setSubject("One of your attending events has changed");
 			msg.setText(msgBody);
 			Transport.send(msg);
+			log.info(msgBody + " is the body of the text");
+			log.info(googleUser.getEmail() + " is the email address");
+			log.info(googleUser.getNickname() + " is the nickname");
 		} catch (AddressException e) {
 			// ...
 		} catch (MessagingException e) {
