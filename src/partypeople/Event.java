@@ -51,9 +51,9 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	
 	
 	//these are used to more easily set the input fields when editing an event
-	private String dateString;
-	private String timeString;
-	private String itemsNeededString;
+	private String dateString = "";
+	private String timeString = "";
+	private String itemsNeededString = "";
 
 	@Id
 	Long id;
