@@ -257,6 +257,7 @@
 	   	 		$("#password-form-group").toggleClass("has-error");
 	   		 	$("#password-confirmation-form-group").toggleClass("has-error");
 	   		 $("#password-confirmation-form-group").append("<span class='help-block'>Please enter a password or change your event to a Public event</span>");
+	   		 return false;
 	   	 	}
 		
 		}

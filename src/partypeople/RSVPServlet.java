@@ -31,6 +31,7 @@ public class RSVPServlet extends HttpServlet{
 			event.removeAttendee(attendee);
 			attendee.removeAttending(event);
 		}
+		
 		StorageHandler.save(event);
 		StorageHandler.save(attendee);
 		

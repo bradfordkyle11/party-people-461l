@@ -48,9 +48,8 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	private List<Ref<Item>> itemsNeeded;
 	private String category = "";
 	private Date timeCreated;
-	
-	
-	//these are used to more easily set the input fields when editing an event
+
+	// these are used to more easily set the input fields when editing an event
 	private String dateString = "";
 	private String timeString = "";
 	private String itemsNeededString = "";
@@ -175,7 +174,7 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 				&& !(newEvent.getName() == null)) {
 			changed.add("Event Name");
 			this.name = newEvent.getName();
-			
+
 		}
 		if (!this.location.equals(newEvent.getLocation())
 				&& !(newEvent.getLocation() == null)) {
@@ -201,18 +200,17 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		this.description = newEvent.getDescription();
 		this.privateEvent = newEvent.isPrivateEvent();
 		this.password = newEvent.getPassword();
-		
-		//items have only changed if the input string for items needed is different
-		if (!this.itemsNeededString.equals(newEvent.getItemsNeededString())){
-			for (Ref<Item> item : this.itemsNeeded){
+
+		// items have only changed if the input string for items needed is
+		// different
+		if (!this.itemsNeededString.equals(newEvent.getItemsNeededString())) {
+			for (Ref<Item> item : this.itemsNeeded) {
 				StorageHandler.delete(item.safeGet());
 			}
 			this.itemsNeeded = newEvent.getItemsNeededRef();
 		}
 
 		this.category = newEvent.getCategory();
-
-		
 
 		// figure out what changed and turn it into a string to
 		// pass to the observers, so it can be emailed.
@@ -222,17 +220,22 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	}
 
 	public void addAttendee(PartyPeopleUser u) {
-		if (attending == null) {
-			attending = new ArrayList<Ref<PartyPeopleUser>>();
-		}
-		Ref<PartyPeopleUser> attendee = Ref.create(u);
-		attending.add(attendee);
-		addObserver(u);
+
+			if (attending == null) {
+				attending = new ArrayList<Ref<PartyPeopleUser>>();
+			}
+			Ref<PartyPeopleUser> attendee = Ref.create(u);
+			if (!attending.contains(attendee)) {
+				attending.add(attendee);
+				addObserver(u);
+			}
+
 	}
 
 	public void removeAttendee(PartyPeopleUser u) {
-		attending.remove(Ref.create(u));
-		deleteObserver(u);
+			attending.remove(Ref.create(u));
+			deleteObserver(u);
+
 	}
 
 	public void addComment(String content, PartyPeopleUser commenter) {
@@ -486,6 +489,5 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	public boolean equals(Event other) {
 		return this.id == other.getId();
 	}
-
 
 }

@@ -50,7 +50,6 @@ public class PartyPeopleUser implements PartyPeopleObserver {
 		for (int i = 1; i < changed.size(); i++) {
 			msgBody += changed.get(i) + "\r\n";
 		}
-		msgBody += "View changes at <link to event>";
 		try {
 			Properties props = new Properties();
 			Session session = Session.getDefaultInstance(props, null);

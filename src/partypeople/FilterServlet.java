@@ -14,12 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class FilterServlet extends HttpServlet {
-	private final ArrayList<String> categories = new ArrayList<String>(
-			Arrays.asList("Birthday", "Graduation", "Sports", "Holiday",
-					"Social", "Music", "Pool Party", "Other"));
+
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
+		ArrayList<String> categories = new ArrayList<String>(
+				Arrays.asList("Birthday", "Graduation", "Sports", "Holiday",
+						"Social", "Music", "Pool Party", "Other"));
 		Filter filter = new Filter();
 		// get the categories to filter with
 		ArrayList<String> desiredCategories = new ArrayList<String>();
