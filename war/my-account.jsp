@@ -57,7 +57,6 @@
           <ul class="nav navbar-nav">
             <li><a href="/index.jsp">Home</a></li>
             <li class="active"><a href="/my-account.jsp">My Account</a></li>
-            <li><a href="#about">About</a></li>
             
             <%
             PartyPeopleUser partyPeopleUser = new PartyPeopleUser();
