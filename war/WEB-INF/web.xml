@@ -44,6 +44,46 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	    <servlet-name>RSVPServlet</servlet-name>
 	    <url-pattern>/rsvp</url-pattern>
 	</servlet-mapping>
+	<servlet>
+	    <servlet-name>CommentServlet</servlet-name>
+	    <servlet-class>partypeople.CommentServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>CommentServlet</servlet-name>
+	    <url-pattern>/post-comment</url-pattern>
+	</servlet-mapping>
+	<servlet>
+	    <servlet-name>ItemSignUpServlet</servlet-name>
+	    <servlet-class>partypeople.ItemSignUpServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>ItemSignUpServlet</servlet-name>
+	    <url-pattern>/item-sign-up</url-pattern>
+	</servlet-mapping>
+	<servlet>
+	    <servlet-name>DeletePartyServlet</servlet-name>
+	    <servlet-class>partypeople.DeletePartyServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>DeletePartyServlet</servlet-name>
+	    <url-pattern>/delete-party</url-pattern>
+	</servlet-mapping>
+	<servlet>
+	    <servlet-name>RequestEditPageServlet</servlet-name>
+	    <servlet-class>partypeople.RequestEditPageServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>RequestEditPageServlet</servlet-name>
+	    <url-pattern>/request-edit-page</url-pattern>
+	</servlet-mapping>
+	<filter>
+    <filter-name>ObjectifyFilter</filter-name>
+    <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>ObjectifyFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

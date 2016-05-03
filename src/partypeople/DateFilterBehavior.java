@@ -4,8 +4,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class DateFilterBehavior implements FilterBehavior{
 	  private Date startDate;
@@ -17,10 +19,20 @@ public class DateFilterBehavior implements FilterBehavior{
 	  }
 	  
 	  public DateFilterBehavior(String startDate, String endDate){
-		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		DateFormat startDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		startDateFormat.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
+		DateFormat endDateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+		endDateFormat.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
+		endDate += " 23:59:59";
+		
+		//zero out dates
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(0);
+		this.startDate = cal.getTime();
+		this.endDate = cal.getTime();
 		try {
-			this.startDate = dateFormat.parse(startDate);
-			this.endDate = dateFormat.parse(endDate);
+			this.startDate = startDateFormat.parse(startDate);
+			this.endDate = endDateFormat.parse(endDate);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

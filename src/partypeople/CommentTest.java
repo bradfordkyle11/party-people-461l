@@ -17,33 +17,32 @@ public class CommentTest {
 	ArrayList<Comment> list2 = new ArrayList<Comment>();
 	@Before
 	public void setup() {
-		PartyPeopleUser a = new PartyPeopleUser(new User("test@gmail.com" , "gmail.com"));
 		String c0 = "1";
 		String c1 = "2";
 		String c2 = "3";
 		String c3 = "4";
-		Comment compare = new Comment(c0, a);
+		Comment compare = new Comment(c0);
 		try {
 			TimeUnit.SECONDS.sleep(1);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Comment compare1 = new Comment(c1, a);
+		Comment compare1 = new Comment(c1);
 		try {
 			TimeUnit.SECONDS.sleep(1);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Comment compare2 = new Comment(c2, a);
+		Comment compare2 = new Comment(c2);
 		try {
 			TimeUnit.SECONDS.sleep(1);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Comment compare3 = new Comment(c3, a);
+		Comment compare3 = new Comment(c3);
 		list1.add(compare3);
 		list1.add(compare2);
 		list1.add(compare1);

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
+
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -21,7 +22,17 @@ public class NewPartyServlet extends HttpServlet {
 		User user = userService.getCurrentUser();
 		
 		PartyPeopleUser owner = StorageHandler.getUser(user);
-		
+		String latlong = request.getParameter("latlong");
+		//remove the parenthesis from the string
+		double latitude = 0;
+		double longitude = 0;
+		if (latlong!=""){
+			latlong = latlong.replace("(", "");
+			latlong = latlong.replace(")", "");
+			String[] latlng = latlong.split(",");
+			latitude = Double.parseDouble(latlng[0]);
+			longitude = Double.parseDouble(latlng[1]);
+		}
 		String name = request.getParameter("party-name");
 		String description = request.getParameter("description");
 		String category = request.getParameter("category");
@@ -38,13 +49,24 @@ public class NewPartyServlet extends HttpServlet {
 		}
 		String price = request.getParameter("price");
 		String itemsNeeded = request.getParameter("items-needed");
+		
+		String action = request.getParameter("action");
+		
 
 		Event newEvent = new Event(owner, name, description, category, date,
-				time, location, publicOrPrivate, password, price, itemsNeeded);
-		StorageHandler.save(newEvent);
-		owner.addCreated(newEvent);
-		StorageHandler.save(owner);
-
+				time, location, latitude, longitude, publicOrPrivate, password, price, itemsNeeded);
+		if (action.equals("new")){
+			StorageHandler.save(newEvent);
+			owner.addCreated(newEvent);
+			StorageHandler.save(owner);
+		}
+		else {
+			Long id = Long.parseLong(request.getParameter("id"));
+			Event oldEvent = StorageHandler.findEventById(id);
+			oldEvent.updateEvent(newEvent);
+			StorageHandler.save(oldEvent);
+		}
+		
 		response.sendRedirect("/index.jsp");
 	}
 }

@@ -24,12 +24,16 @@ public class RSVPServlet extends HttpServlet{
 		Event event = StorageHandler.findEventById(Long.parseLong(id));
 		
 		if (request.getParameter("rsvp?").equals("true")){
-			event.addAttendee(attendee);	
+			event.addAttendee(attendee);
+			attendee.addAttending(event);
 		}
 		else {
 			event.removeAttendee(attendee);
+			attendee.removeAttending(event);
 		}
+		
 		StorageHandler.save(event);
+		StorageHandler.save(attendee);
 		
 		response.sendRedirect(request.getHeader("referer"));
 	}

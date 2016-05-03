@@ -5,9 +5,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
+import java.util.TimeZone;
 
 import javax.persistence.Embedded;
 
@@ -19,7 +22,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Load;
 
 @Entity
-public class Event implements Comparable<Event> {
+public class Event extends PartyPeopleObservable implements Comparable<Event> {
 	public static final int SOONEST_DATE = 0;
 	public static final int ALPHABETICAL = 1;
 	public static final int CLOSEST_DISTANCE = 2;
@@ -29,18 +32,29 @@ public class Event implements Comparable<Event> {
 	private int sortType;
 	private String name = "";
 	@Embedded
-	@Load private Ref<PartyPeopleUser> owner;
-	@Load private List<Ref<PartyPeopleUser>> attending;
+	@Load
+	private Ref<PartyPeopleUser> owner;
+	@Load
+	private List<Ref<PartyPeopleUser>> attending;
 	private String location = "";
+	private double latitude;
+	private double longitude;
 	private Date date;
 	private String description = "";
-	private List<Comment> comments;
+	@Load
+	private List<Ref<Comment>> comments;
 	private boolean privateEvent;
 	private String password = "";
 	private double price;
-	private List<String> itemsNeeded;
+	@Load
+	private List<Ref<Item>> itemsNeeded;
 	private String category = "";
 	private Date timeCreated;
+
+	// these are used to more easily set the input fields when editing an event
+	private String dateString = "";
+	private String timeString = "";
+	private String itemsNeededString = "";
 
 	@Id
 	Long id;
@@ -49,44 +63,89 @@ public class Event implements Comparable<Event> {
 
 	public Event() {
 		timeCreated = new Date();
+		
 	}
 
 	public Event(PartyPeopleUser owner, String name, String description,
 			String category, String date, String time, String location,
-			String publicOrPrivate, String password, String price,
-			String itemsNeeded) {
+			double latitude, double longitude, String publicOrPrivate,
+			String password, String price, String itemsNeeded) {
+		this.timeCreated = new Date();
 		this.owner = Ref.create(owner);
 		this.name = name;
 		this.description = description;
 		this.category = category;
 		if (date != null) {
-			DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+			this.dateString = date;
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("America/Chicago"));
+			cal.setTimeInMillis(0);
+			this.date = cal.getTime();
+			DateFormat dateFormat;
+			if (time != ""){
+				timeString = time;
+				date += " " + time;
+				dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm");
+				dateFormat.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
+			}
+			else {
+				dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+				dateFormat.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
+			}
 			try {
 				this.date = dateFormat.parse(date);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// need to set the time
+
+			/*if (time != "") {
+				timeString = time;
+				String hour = time.substring(0, 2);
+				String minute = time.substring(3, 5);
+
+				int numHours = Integer.parseInt(hour);
+				int numMinutes = Integer.parseInt(minute);
+				if (time.contains("P")) {
+					if (numHours != 12)
+						numHours += 12;
+				} else {
+					if (numHours == 12) {
+						numHours -= 12;
+					}
+				}
+
+				this.date.setHours(numHours);
+				this.date.setMinutes(numMinutes);
+			}*/
+
 		}
 
 		this.location = location;
+		this.latitude = latitude;
+		this.longitude = longitude;
 		if (publicOrPrivate != null) {
-			this.privateEvent = publicOrPrivate.equals("private");
+			this.privateEvent = publicOrPrivate.equals("Private");
 		}
 		this.password = password;
 
 		if (!price.equals("")) {
 			this.price = Double.parseDouble(price);
 		}
-		this.itemsNeeded = new ArrayList<String>(Arrays.asList(itemsNeeded
-				.split(",")));
-		while (this.itemsNeeded.contains("")){
-			this.itemsNeeded.remove("");
+		this.itemsNeededString = itemsNeeded;
+		this.itemsNeeded = new ArrayList<Ref<Item>>();
+		ArrayList<String> itemsNeededTemp = new ArrayList<String>(
+				Arrays.asList(itemsNeeded.split(",")));
+		while (itemsNeededTemp.contains("")) {
+			itemsNeededTemp.remove("");
+		}
+
+		for (String s : itemsNeededTemp) {
+			Item item = new Item(s, null);
+			this.itemsNeeded.add(Ref.create(item));
 		}
 
 		this.attending = new ArrayList<Ref<PartyPeopleUser>>();
-		this.comments = new ArrayList<Comment>();
+		this.comments = new ArrayList<Ref<Comment>>();
 	}
 
 	public int getSortType() {
@@ -101,90 +160,115 @@ public class Event implements Comparable<Event> {
 		return timeCreated;
 	}
 
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
 	public void setTimeCreated(Date timeCreated) {
 		this.timeCreated = timeCreated;
 	}
 
 	public void updateEvent(Event newEvent) {
 		ArrayList<String> changed = new ArrayList<String>();
-		boolean hasChanged = false;
 		changed.add(this.name);
 		if (!this.name.equals(newEvent.getName())
 				&& !(newEvent.getName() == null)) {
 			changed.add("Event Name");
 			this.name = newEvent.getName();
-			hasChanged = true;
-		}
-		if (!this.owner.equals(newEvent.getOwner())
-				&& !(newEvent.getOwner() == null)) {
-			changed.add("Host");
-			this.owner = Ref.create(newEvent.getOwner());
-			hasChanged = true;
+
 		}
 		if (!this.location.equals(newEvent.getLocation())
 				&& !(newEvent.getLocation() == null)) {
 			changed.add("Location");
 			this.location = newEvent.getLocation();
-			hasChanged = true;
+			this.latitude = newEvent.getLatitude();
+			this.longitude = newEvent.getLongitude();
+			setChanged();
 		}
 		if (!this.date.equals(newEvent.getDate())
 				&& !(newEvent.getDate() == null)) {
 			changed.add("Date");
 			this.date = newEvent.getDate();
-			hasChanged = true;
+			this.dateString = newEvent.getDateString();
+			this.timeString = newEvent.getTimeString();
+			setChanged();
 		}
 		if (this.price != newEvent.getPrice()) {
 			changed.add("Price");
 			this.price = newEvent.getPrice();
-			hasChanged = true;
+			setChanged();
 		}
 		this.description = newEvent.getDescription();
-		this.comments = newEvent.getComments();
 		this.privateEvent = newEvent.isPrivateEvent();
 		this.password = newEvent.getPassword();
-		this.itemsNeeded = newEvent.getItemsNeeded();
+
+		// items have only changed if the input string for items needed is
+		// different
+		if (!this.itemsNeededString.equals(newEvent.getItemsNeededString())) {
+			for (Ref<Item> item : this.itemsNeeded) {
+				StorageHandler.delete(item.safeGet());
+			}
+			this.itemsNeeded = newEvent.getItemsNeededRef();
+		}
+
 		this.category = newEvent.getCategory();
-
-		this.attending.clear();
-		List<PartyPeopleUser> attendees = newEvent.getAttending();
-		for (PartyPeopleUser attendee : attendees) {
-			this.attending.add(Ref.create(attendee));
-		}
-
-		if (hasChanged) {
-			// setChanged();
-		}
 
 		// figure out what changed and turn it into a string to
 		// pass to the observers, so it can be emailed.
-		// notifyObservers(changed);
+		notifyObservers(changed);
 		// clearChanged();
 
 	}
 
 	public void addAttendee(PartyPeopleUser u) {
-		if (attending==null){
+
+		if (attending == null) {
 			attending = new ArrayList<Ref<PartyPeopleUser>>();
 		}
 		Ref<PartyPeopleUser> attendee = Ref.create(u);
-		attending.add(attendee);
-		// addObserver(u);
+		if (!attending.contains(attendee)) {
+			attending.add(attendee);
+			addObserver(u);
+		}
+
 	}
 
 	public void removeAttendee(PartyPeopleUser u) {
 		attending.remove(Ref.create(u));
-		// deleteObserver(u);
+		deleteObserver(u);
+
 	}
 
 	public void addComment(String content, PartyPeopleUser commenter) {
-		if (comments==null){
-			comments = new ArrayList<Comment>();
+		if (comments == null) {
+			comments = new ArrayList<Ref<Comment>>();
 		}
-		comments.add(new Comment(content, commenter));
+		Comment newComment = new Comment(content, commenter);
+		StorageHandler.save(newComment);
+		comments.add(Ref.create(newComment));
+	}
+
+	public void addComment(Comment comment) {
+		if (comments == null) {
+			comments = new ArrayList<Ref<Comment>>();
+		}
+		comments.add(Ref.create(comment));
 	}
 
 	public void removeComment(Comment comment) {
-		comments.remove(comment);
+		comments.remove(Ref.create(comment));
 	}
 
 	public String getName() {
@@ -207,7 +291,10 @@ public class Event implements Comparable<Event> {
 		ArrayList<PartyPeopleUser> attendees = new ArrayList<PartyPeopleUser>();
 		if (attending != null) {
 			for (Ref<PartyPeopleUser> attendee : attending) {
-				attendees.add(attendee.safeGet());
+				PartyPeopleUser temp = attendee.getValue();
+				if (temp != null) {
+					attendees.add(temp);
+				}
 			}
 		}
 		return attendees;
@@ -215,6 +302,27 @@ public class Event implements Comparable<Event> {
 
 	public void setAttending(List<Ref<PartyPeopleUser>> attending) {
 		this.attending = attending;
+	}
+
+	public List<Item> getItemsNeeded() {
+		ArrayList<Item> itemsList = new ArrayList<Item>();
+		if (itemsNeeded != null) {
+			for (Ref<Item> item : itemsNeeded) {
+				Item temp = item.getValue();
+				if (item != null) {
+					itemsList.add(temp);
+				}
+			}
+		}
+		return itemsList;
+	}
+
+	public List<Ref<Item>> getItemsNeededRef() {
+		return this.itemsNeeded;
+	}
+
+	public void setItemsNeeded(List<Ref<Item>> itemsNeeded) {
+		this.itemsNeeded = itemsNeeded;
 	}
 
 	public String getLocation() {
@@ -227,6 +335,12 @@ public class Event implements Comparable<Event> {
 
 	public Date getDate() {
 		return date;
+	}
+	
+	public String getFormattedDate(){
+		DateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy 'at' hh:mm a z");
+		sdf.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
+		return (sdf.format(date));
 	}
 
 	public void setDate(Date date) {
@@ -242,18 +356,60 @@ public class Event implements Comparable<Event> {
 	}
 
 	public List<Comment> getComments() {
-		if (comments==null){
-			comments = new ArrayList<Comment>();
+		ArrayList<Comment> result = new ArrayList<Comment>();
+		if (comments != null) {
+			for (Ref<Comment> comment : comments) {
+				Comment temp = comment.getValue();
+				if (temp != null) {
+					result.add(temp);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public List<Ref<Comment>> getRefComments() {
+		if (comments == null) {
+			comments = new ArrayList<Ref<Comment>>();
 		}
 		return comments;
 	}
 
 	public void setComments(List<Comment> comments) {
-		this.comments = comments;
+		ArrayList<Ref<Comment>> updatedComments = new ArrayList<Ref<Comment>>();
+		for (Comment comment : comments) {
+			updatedComments.add(Ref.create(comment));
+		}
+		this.comments = updatedComments;
 	}
 
 	public boolean isPrivateEvent() {
 		return privateEvent;
+	}
+
+	public String getDateString() {
+		return dateString;
+	}
+
+	public void setDateString(String dateString) {
+		this.dateString = dateString;
+	}
+
+	public String getTimeString() {
+		return timeString;
+	}
+
+	public void setTimeString(String timeString) {
+		this.timeString = timeString;
+	}
+
+	public String getItemsNeededString() {
+		return itemsNeededString;
+	}
+
+	public void setItemsNeededString(String itemsNeededString) {
+		this.itemsNeededString = itemsNeededString;
 	}
 
 	public void setPrivateEvent(boolean privateEvent) {
@@ -276,17 +432,6 @@ public class Event implements Comparable<Event> {
 		this.price = price;
 	}
 
-	public List<String> getItemsNeeded() {
-		if (itemsNeeded==null){
-			itemsNeeded = new ArrayList<String>();
-		}
-		return itemsNeeded;
-	}
-
-	public void setItemsNeeded(List<String> itemsNeeded) {
-		this.itemsNeeded = itemsNeeded;
-	}
-
 	public String getCategory() {
 		return category;
 	}
@@ -294,10 +439,10 @@ public class Event implements Comparable<Event> {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	
-	public boolean isAttending(PartyPeopleUser attendee){
+
+	public boolean isAttending(PartyPeopleUser attendee) {
 		List<PartyPeopleUser> attending = getAttending();
-		for (PartyPeopleUser att : attending){
+		for (PartyPeopleUser att : attending) {
 			String email = att.getGoogleUser().getEmail();
 		}
 		return attending.contains(attendee);
@@ -308,13 +453,20 @@ public class Event implements Comparable<Event> {
 		// TODO Auto-generated method stub
 		switch (sortType) {
 		case SOONEST_DATE:
-			return date.compareTo(e.getDate());
+			if (this.date == null) {
+				return 1;
+			}
+			if (e.getDate() == null) {
+				return -1;
+			} else {
+				return date.compareTo(e.getDate());
+			}
 		case ALPHABETICAL:
 			return name.compareTo(e.getName());
 		case CLOSEST_DISTANCE:
 			return 0;
 		case TIME_CREATED:
-			return timeCreated.compareTo(e.getTimeCreated());
+			return -timeCreated.compareTo(e.getTimeCreated());
 		case PRICE:
 			return Double.compare(price, e.getPrice());
 		default:
@@ -363,7 +515,7 @@ public class Event implements Comparable<Event> {
 	}
 
 	public boolean equals(Event other) {
-		return this.toString().equals(other.toString());
+		return this.id == other.getId();
 	}
 
 }

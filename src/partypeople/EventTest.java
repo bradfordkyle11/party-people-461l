@@ -85,9 +85,9 @@ public class EventTest {
 		for (int i = 0; i < sort.size(); i++) {
 			sort.get(i).setSortType(3);
 		}
-		correct.add(sort.get(0));
-		correct.add(sort.get(1));
 		correct.add(sort.get(2));
+		correct.add(sort.get(1));
+		correct.add(sort.get(0));
 		Collections.sort(sort);
 		assertTrue(sort.equals(correct));
 	}

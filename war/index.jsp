@@ -2,6 +2,7 @@
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%@ page import="partypeople.PartyPeopleUser" %>
 <%@ page import="partypeople.StorageHandler" %>
 <%@ page import="partypeople.Event" %>
@@ -10,6 +11,17 @@
 
 <html lang="en">
   <head>
+  <style>
+ 	 p1.italic {
+   	 font-size: 75%;
+   	 font-style: italic;
+	}
+	
+	p2.thick {
+		
+		font-weight: bold;
+	}
+  </style>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,7 +38,6 @@
     
     <link href="css/bootstrap-datepicker.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link id="bsdp-css" href="css/datepicker3.css" rel="stylesheet">
     
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -55,13 +66,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Party People</a>
+          <a class="navbar-brand" href="/index.jsp#">Party People</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
+            <li class="active"><a href="/index.jsp#">Home</a></li>
             <li><a href="/my-account.jsp">My Account</a></li>
-            <li><a href="#about">About</a></li>
             
             <%
             PartyPeopleUser partyPeopleUser = new PartyPeopleUser();
@@ -73,10 +83,10 @@
             		StorageHandler.save(partyPeopleUser);
             	}
             %>
-            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout</a>
+            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout (You are logged in as <%=user.getEmail()%>)</a>
             <%} else {
             %>
-            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login</a>
+            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login with Google</a>
             <%
             }
             %>
@@ -95,11 +105,18 @@
 				%>
 				<a class="btn btn-primary" href="/new-party-event.jsp" role="button">Create New Party Event</a>
 				<%
+				} else {
+				%>
+				<a class="btn btn-primary" role="button" disabled>Login To Create Party Event</a>
+				<%
 				}
 				%>
 			</div>
 			<div class="col-sm-4">
-				<form role="form" method="post" action="update-filters">
+			
+			<!-- Searching form -->
+				<form role="form" method="get" action="update-filters">
+
 					<div class="input-group">
 						<input type="search" placeholder="Search parties" class="form-control" id="search" name="query">
 						<span class="input-group-btn">
@@ -118,7 +135,9 @@
     <div class="container">
     	<h1>Upcoming Parties:</h1>
 	   	<div class="row">
-	
+	   	
+	   	
+		  <!-- TODO: only display a certain number of parties per page -->
 	      <div class="col-md-8">
           <%
 			//load and display events
@@ -138,9 +157,10 @@
 	    			pageContext.setAttribute("party_name", event.getName());
 	    			pageContext.setAttribute("description", event.getDescription());
 	    			pageContext.setAttribute("category", event.getCategory());
-	    			//pageContext.setAttribute("date", event.getDate().toString());
+	    			pageContext.setAttribute("date", event.getFormattedDate());
 	    			pageContext.setAttribute("location", event.getLocation());
-	    			pageContext.setAttribute("price", String.valueOf(event.getPrice()));
+	    			DecimalFormat numberFormat = new DecimalFormat("'$'#0.00");
+	    			pageContext.setAttribute("price", numberFormat.format(event.getPrice()));
 	    			pageContext.setAttribute("id", event.getId().toString());
 	    	    	%>
 	    	    	<form role="form" method="get" action="party-page">
@@ -150,15 +170,54 @@
 	    	    	<div class="well well-sm">
 			        <h2><a href="#" onclick="$(this).closest('form').submit()">${party_name}</a></h2>
 			        </form>
-			        <p>${category}</p>
-			        <p>${location}</p>
-			        <p>${description}</p>
+			        <p1 class=italic>${category}<br><br></p1>
+			        <%
+			        if(event.isPrivateEvent()){ 
+			        	%>
+			        	<div class="row">
+	      					<div class="col-xs-8 col-sm-6">
+	        		        <p>Private event</p>
+	     					 </div>
+	     				
+				        	
+			        	</div>
+			        	<%
+			        } else {
+			        %>
+
+			       	<div class="row">
+      					<div class="col-xs-8 col-sm-6">
+        		        <p>${description}</p>
+     					 </div>
+     					 <div class="col-xs-8 col-sm-6">
+     					 
+     					 <p><strong>When: </strong> ${date}</p>
+     					 <p><strong>Where:</strong> ${location}</p>
+     					 <p><strong>Cost:</strong> ${price}</p>
+			        	</div>
+			        </div>
+			        <%
+			        }
+			        %>
+			        	
+			        
+
+	
 			        
 			        <!-- Button for RSVPing or deciding not to come -->
+			        <%
+			        if (!event.isPrivateEvent()){
+			        %>
 			        <form role="form" method="post" action="rsvp">
 	    	    		<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>			        
 			        	<%
-			        	if(event.isAttending(partyPeopleUser)){
+			        	if (user==null){
+			        		%>
+			        		<input type="hidden" value="false" name="rsvp?"/>
+	    	    			<button class="btn btn-primary" type="submit" disabled>Login to RSVP</button>
+			        		<%
+			        	}
+			        	else if(event.isAttending(partyPeopleUser)){
 			        		%>
 			        		<input type="hidden" value="false" name="rsvp?"/>
 	    	    			<button class="btn btn-primary" type="submit">I can't make it</button>
@@ -169,6 +228,7 @@
 		    	    		<button class="btn btn-primary" type="submit">RSVP &raquo;</button>
 		    	    		<%
 			        	}
+			        }
 	    	    		%>
 	    	    	</form>
 
@@ -185,39 +245,58 @@
 	      <div class="well well-sm">
 	      	<h3>Filters</h3>
 	      	
-	      	<form role="form" action="update-filters" method="get">
+	      	<form role="form" action="update-filters" method="get" name="filter-form" id="filter-form">
+	      		<h4>Sort by:</h4>
+	      		<div class="form-group">
+    			<select class="form-control" id="sort-type" name="sort-type">
+    				<option>Soonest</option>
+    				<option>A to z</option>
+    				<option>Newest</option>
+    				<option>Price: low to high</option>
+    			</select>
+    		</div>
 	      		<h4>Categories:</h4>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Birthday">Birthday</label>
+	      			<label><input type="checkbox" value="" id="Birthday" name="Birthday">Birthday</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Graduation">Graduation</label>
+	      			<label><input type="checkbox" value="" id="Graduation" name="Graduation">Graduation</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Sports">Sports</label>
+	      			<label><input type="checkbox" value="" id="Sports" name="Sports">Sports</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Holiday">Holiday</label>
+	      			<label><input type="checkbox" value="" id="Holiday" name="Holiday">Holiday</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Social">Social</label>
+	      			<label><input type="checkbox" value="" id="Social" name="Social">Social</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Music">Music</label>
+	      			<label><input type="checkbox" value="" id="Music" name="Music">Music</label>
 	      		</div>
 	 			<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="Pool Party">Pool Party</label>
+	      			<label><input type="checkbox" value="" id="Pool Party" name="Pool Party">Pool Party</label>
 	      		</div>
 	      		<div class="checkbox">
-	      			<label><input type="checkbox" value="" name="other">Other</label>
+	      			<label><input type="checkbox" value="" id="Other" name="Other">Other</label>
       			</div>
 	      		<h4>Date Range:</h4>
 	      		<div class="input-daterange input-group" data-provide="datepicker" id="datepicker">
-    				<input type="text" class="input-sm form-control" name="start" />
+    				<input type="text" class="input-sm form-control" id="start" name="start" />
     				<span class="input-group-addon">to</span>
-   			 		<input type="text" class="input-sm form-control" name="end" />
+   			 		<input type="text" class="input-sm form-control" id="end" name="end" />
 				</div>
-				<button type="submit" class="btn btn-primary">Apply</button>
+				<h4>Distance:</h4>
+				<div class="form-group">
+	    			<label class="control-label" for="radius">Radius (in mi.):</label>
+	    			<input type="number" class="form-control" name="radius" id="radius" placeholder="Enter radius in miles">
+	    		</div>
+		    	<div class="form-group">
+	    			<label class="control-label" for="location">From location:</label>
+	    			<input type="text" class="form-control" name="location" id="location" placeholder="Enter location">
+	    		</div>
+	    		<input type="hidden" name="latlng" id="latlng">
+				<button type="button" class="btn btn-primary" onclick="submitFilterForm()">Apply</button>
 	      		
     			
     			
@@ -243,8 +322,123 @@
 
     <script type="text/javascript">
     $('#datepicker input').datepicker({
-        todayHighlight: true
+        todayHighlight: true,
+        startDate: new Date()
     });
+    </script>
+    </script>
+    <script>
+    function initMap() {
+        geocoder = new google.maps.Geocoder();
+      }
+
+    function submitFilterForm(){
+    	//alert("you are here");
+    	if(document.getElementById("location").value != ""){
+    		geocodeAddress(geocoder);
+    	}
+    	else {
+    		document.getElementById("filter-form").submit();
+    	}
+    }
+      function geocodeAddress(geocoder) {
+		//alert(document.getElementById('latlong').value);
+        var address = document.getElementById('location').value;
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+        	  $('#latlng').val(results[0].geometry.location.toString());
+        	 // alert(document.getElementById('latlong').value);
+          	document.getElementById("filter-form").submit();
+        	  
+
+          } else {
+            //alert('Geocode was not successful for the following reason: ' + status);
+            document.getElementById("filter-form").submit();
+          }
+        });
+      }
+	</script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBux1-zJMJGC5eMzSZI2ofmw_t06DuJajg&callback=initMap"
+    async defer></script>
+    
+    <!-- This script can be used to get request parameters with Javascript -->
+    <script>
+    function getQueryParameter ( parameterName ) {
+    	  var queryString = window.top.location.search.substring(1);
+    	  var parameterName = parameterName + "=";
+    	  if ( queryString.length > 0 ) {
+    	    begin = queryString.indexOf ( parameterName );
+    	    if ( begin != -1 ) {
+    	      begin += parameterName.length;
+    	      end = queryString.indexOf ( "&" , begin );
+    	        if ( end == -1 ) {
+    	        end = queryString.length
+    	      }
+    	        
+    	      var temp =  unescape ( queryString.substring ( begin, end ) );
+    	      var result = temp.replace(/\+/g, " ");
+    	      return result;
+    	    }
+    	  }
+    	  return "null";
+    	}
+    </script>
+    
+    <!-- This script will update the filter and search forms based on submitted data -->
+    <script type="text/javascript">
+    	//set search value
+    	if (getQueryParameter("query")!="null"){
+    		document.getElementById("search").value = getQueryParameter("query");
+    	}
+    	
+    	//set sort type
+    	if (getQueryParameter("sort-type")!="null"){
+    		document.getElementById("sort-type").value = getQueryParameter("sort-type");
+    	}
+    	
+    	//set categories
+    	if (getQueryParameter("Birthday")!="null"){
+    		document.getElementById("Birthday").checked = true;
+    	}
+    	if (getQueryParameter("Graduation")!="null"){
+    		document.getElementById("Graduation").checked = true;
+    	}
+    	if (getQueryParameter("Sports")!="null"){
+    		document.getElementById("Sports").checked = true;
+    	}
+    	if (getQueryParameter("Holiday")!="null"){
+    		document.getElementById("Holiday").checked = true;
+    	}
+    	if (getQueryParameter("Social")!="null"){
+    		document.getElementById("Social").checked = true;
+    	}
+    	if (getQueryParameter("Music")!="null"){
+    		document.getElementById("Music").checked = true;
+    	}
+    	if (getQueryParameter("Pool Party")!="null"){
+    		document.getElementById("Pool Party").checked = true;
+    	}
+    	if (getQueryParameter("Other")!="null"){
+    		document.getElementById("Other").checked = true;
+    	}
+    	
+    	//set date range
+    	if (getQueryParameter("start")!="null"){
+    		document.getElementById("start").value = getQueryParameter("start");
+    	}
+    	if (getQueryParameter("end")!="null"){
+    		document.getElementById("end").value = getQueryParameter("end");
+    	}
+    	
+    	//set distance filter
+    	if (getQueryParameter("radius")!="null"){
+    		document.getElementById("radius").value = getQueryParameter("radius");
+    	}
+    	if (getQueryParameter("location")!="null"){
+    		document.getElementById("location").value = getQueryParameter("location");
+    	}
+    	
+    	
     </script>
 
 
