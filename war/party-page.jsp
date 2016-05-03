@@ -123,7 +123,7 @@
         	password=prompt('Please enter your password to view this page!',' ');
         	
     		if (password==pass1){
-    			
+    			Cookies.set("correct-password-" + <%=id%>, "<%=nickname%>");
     		}
     		else
     		   {
@@ -131,7 +131,7 @@
     		    window.location.href="/";
     		    }
     		
-            Cookies.set("correct-password-" + <%=id%>, "<%=nickname%>");
+            
         }
 
 	}
