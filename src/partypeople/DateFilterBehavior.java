@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -18,9 +19,18 @@ public class DateFilterBehavior implements FilterBehavior{
 	  
 	  public DateFilterBehavior(String startDate, String endDate){
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		
+		//zero out dates
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(0);
+		this.startDate = cal.getTime();
+		this.endDate = cal.getTime();
 		try {
 			this.startDate = dateFormat.parse(startDate);
 			this.endDate = dateFormat.parse(endDate);
+			this.endDate.setHours(23);
+			this.endDate.setMinutes(59);
+			this.endDate.setSeconds(59);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
