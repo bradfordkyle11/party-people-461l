@@ -170,9 +170,21 @@
 	    	    	<div class="well well-sm">
 			        <h2><a href="#" onclick="$(this).closest('form').submit()">${party_name}</a></h2>
 			        </form>
-
-			        
 			        <p1 class=italic>${category}<br><br></p1>
+			        <%
+			        if(event.isPrivateEvent()){ 
+			        	%>
+			        	<div class="row">
+	      					<div class="col-xs-8 col-sm-6">
+	        		        <p>Private event</p>
+	     					 </div>
+	     				
+				        	
+			        	</div>
+			        	<%
+			        } else {
+			        %>
+
 			       	<div class="row">
       					<div class="col-xs-8 col-sm-6">
         		        <p>${description}</p>
@@ -184,12 +196,18 @@
      					 <p><strong>Cost:</strong> ${price}</p>
 			        	</div>
 			        </div>
+			        <%
+			        }
+			        %>
 			        	
 			        
 
 	
 			        
 			        <!-- Button for RSVPing or deciding not to come -->
+			        <%
+			        if (!event.isPrivateEvent()){
+			        %>
 			        <form role="form" method="post" action="rsvp">
 	    	    		<input type="hidden" value="<%=pageContext.getAttribute("id")%>" name="event-id"/>			        
 			        	<%
@@ -210,6 +228,7 @@
 		    	    		<button class="btn btn-primary" type="submit">RSVP &raquo;</button>
 		    	    		<%
 			        	}
+			        }
 	    	    		%>
 	    	    	</form>
 

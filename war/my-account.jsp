@@ -68,10 +68,10 @@
             		StorageHandler.save(partyPeopleUser);
             	}
             %>
-            <li><a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Logout (You are logged in as <%=user.getEmail()%>)</a>
+            <li><a href="<%= userService.createLogoutURL("/") %>">Logout (You are logged in as <%=user.getEmail()%>)</a>
             <%} else {
             %>
-            <li><a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Login with Google</a>
+            <li><a href="<%= userService.createLoginURL("/") %>">Login with Google</a>
             <%
             }
             %>
