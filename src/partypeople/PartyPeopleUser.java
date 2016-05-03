@@ -55,7 +55,7 @@ public class PartyPeopleUser implements PartyPeopleObserver {
 			Properties props = new Properties();
 			Session session = Session.getDefaultInstance(props, null);
 			Message msg = new MimeMessage(session);
-			msg.setFrom(new InternetAddress("email@appspot.com", "Party People"));
+			msg.setFrom(new InternetAddress("Admin@party-people-461l.appspotmail.com", "Party People"));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(
 					googleUser.getEmail(), googleUser.getNickname()));
 			msg.setSubject("One of your attending events has changed");
