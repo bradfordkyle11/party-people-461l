@@ -1,6 +1,7 @@
 package partypeople;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,7 +19,6 @@ public class DeletePartyServlet extends HttpServlet {
 		String id = (String) request.getParameter("event-id");
 		Event event = StorageHandler.findEventById(Long.parseLong(id));
 		StorageHandler.delete(event);
-
 		
 		response.sendRedirect(request.getHeader("referer"));
 	}

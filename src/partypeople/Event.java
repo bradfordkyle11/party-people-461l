@@ -221,20 +221,20 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 
 	public void addAttendee(PartyPeopleUser u) {
 
-			if (attending == null) {
-				attending = new ArrayList<Ref<PartyPeopleUser>>();
-			}
-			Ref<PartyPeopleUser> attendee = Ref.create(u);
-			if (!attending.contains(attendee)) {
-				attending.add(attendee);
-				addObserver(u);
-			}
+		if (attending == null) {
+			attending = new ArrayList<Ref<PartyPeopleUser>>();
+		}
+		Ref<PartyPeopleUser> attendee = Ref.create(u);
+		if (!attending.contains(attendee)) {
+			attending.add(attendee);
+			addObserver(u);
+		}
 
 	}
 
 	public void removeAttendee(PartyPeopleUser u) {
-			attending.remove(Ref.create(u));
-			deleteObserver(u);
+		attending.remove(Ref.create(u));
+		deleteObserver(u);
 
 	}
 
@@ -278,7 +278,10 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		ArrayList<PartyPeopleUser> attendees = new ArrayList<PartyPeopleUser>();
 		if (attending != null) {
 			for (Ref<PartyPeopleUser> attendee : attending) {
-				attendees.add(attendee.safeGet());
+				PartyPeopleUser temp = attendee.getValue();
+				if (temp != null) {
+					attendees.add(temp);
+				}
 			}
 		}
 		return attendees;
@@ -292,7 +295,10 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		ArrayList<Item> itemsList = new ArrayList<Item>();
 		if (itemsNeeded != null) {
 			for (Ref<Item> item : itemsNeeded) {
-				itemsList.add(item.safeGet());
+				Item temp = item.getValue();
+				if (item != null) {
+					itemsList.add(temp);
+				}
 			}
 		}
 		return itemsList;
@@ -334,7 +340,10 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 		ArrayList<Comment> result = new ArrayList<Comment>();
 		if (comments != null) {
 			for (Ref<Comment> comment : comments) {
-				result.add(comment.safeGet());
+				Comment temp = comment.getValue();
+				if (temp != null) {
+					result.add(temp);
+				}
 			}
 		}
 

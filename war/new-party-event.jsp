@@ -222,7 +222,8 @@
     </script>
     <script type="text/javascript">
     $('#datepicker').datepicker({
-        todayHighlight: true
+        todayHighlight: true,
+        startDate: new Date()
     });
     </script>
     <script>

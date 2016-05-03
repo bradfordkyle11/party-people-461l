@@ -1,5 +1,8 @@
 package partypeople;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.google.appengine.api.users.User;
@@ -61,7 +64,22 @@ public class StorageHandler {
 	
 	public static List<Event> loadEvents(){
 		ObjectifyService.register(Event.class);
-		List<Event> result = ObjectifyService.ofy().load().type(Event.class).list();
+		List<Event> stored = ObjectifyService.ofy().load().type(Event.class).list();
+		Date date;
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(0);
+		date = cal.getTime();
+		date.setHours(0);
+		Date current = new Date();
+		date.setDate(current.getDate());
+		date.setMonth(current.getMonth());
+		date.setYear(current.getYear());
+		ArrayList<Event> result = new ArrayList<Event>();
+		for (Event event : stored){
+			if (!event.getDate().before(date)){
+				result.add(event);
+			}
+		}
 		return result;
 	}
 	

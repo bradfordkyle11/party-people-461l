@@ -2,6 +2,7 @@
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%@ page import="partypeople.PartyPeopleUser" %>
 <%@ page import="partypeople.StorageHandler" %>
 <%@ page import="partypeople.Event" %>
@@ -159,7 +160,8 @@
 	    			pageContext.setAttribute("category", event.getCategory());
 	    			pageContext.setAttribute("date", event.getDate().toString());
 	    			pageContext.setAttribute("location", event.getLocation());
-	    			pageContext.setAttribute("price", String.valueOf(event.getPrice()));
+	    			DecimalFormat numberFormat = new DecimalFormat("'$'#0.00");
+	    			pageContext.setAttribute("price", numberFormat.format(event.getPrice()));
 	    			pageContext.setAttribute("id", event.getId().toString());
 	    	    	%>
 	    	    	<form role="form" method="get" action="party-page">
@@ -321,7 +323,8 @@
 
     <script type="text/javascript">
     $('#datepicker input').datepicker({
-        todayHighlight: true
+        todayHighlight: true,
+        startDate: new Date()
     });
     </script>
     </script>

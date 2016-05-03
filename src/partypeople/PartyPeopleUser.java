@@ -22,19 +22,23 @@ import com.googlecode.objectify.annotation.Load;
 
 @Entity
 public class PartyPeopleUser implements PartyPeopleObserver {
-	private static final Logger log = Logger.getLogger(PartyPeopleUser.class.getName());
+	private static final Logger log = Logger.getLogger(PartyPeopleUser.class
+			.getName());
 	private User googleUser;
-	@Load private List<Ref<Event>> myAttending;
-	@Load private List<Ref<Event>> myCreated;
-	@Id Long id;
-	
-	public PartyPeopleUser(User googleUser){
+	@Load
+	private List<Ref<Event>> myAttending;
+	@Load
+	private List<Ref<Event>> myCreated;
+	@Id
+	Long id;
+
+	public PartyPeopleUser(User googleUser) {
 		this.googleUser = googleUser;
 		myAttending = new ArrayList<Ref<Event>>();
 		myCreated = new ArrayList<Ref<Event>>();
 	}
-	
-	public PartyPeopleUser(){
+
+	public PartyPeopleUser() {
 		this.googleUser = new User("guest", "gmail.com");
 		myAttending = new ArrayList<Ref<Event>>();
 		myCreated = new ArrayList<Ref<Event>>();
@@ -54,7 +58,8 @@ public class PartyPeopleUser implements PartyPeopleObserver {
 			Properties props = new Properties();
 			Session session = Session.getDefaultInstance(props, null);
 			Message msg = new MimeMessage(session);
-			msg.setFrom(new InternetAddress("Admin@party-people-461l.appspotmail.com", "Party People"));
+			msg.setFrom(new InternetAddress(
+					"Admin@party-people-461l.appspotmail.com", "Party People"));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(
 					googleUser.getEmail(), googleUser.getNickname()));
 			msg.setSubject("One of your attending events has changed");
@@ -72,13 +77,12 @@ public class PartyPeopleUser implements PartyPeopleObserver {
 		}
 
 	}
-	
-	
+
 	public Long getId() {
 		return id;
 	}
 
-	public String toString(){
+	public String toString() {
 		return googleUser.getNickname();
 	}
 
@@ -89,39 +93,52 @@ public class PartyPeopleUser implements PartyPeopleObserver {
 	public void setGoogleUser(User googleUser) {
 		this.googleUser = googleUser;
 	}
-	
-	public void addCreated(Event event){
+
+	public void addCreated(Event event) {
 		myCreated.add(Ref.create(event));
 	}
-	
-	public List<Event> getCreated(){
+
+	public List<Event> getCreated() {
 		List<Event> created = new ArrayList<Event>();
-		if (this.myCreated!=null){
-			for (Ref<Event> event : myCreated){
-				created.add(event.safeGet());
+		if (this.myCreated != null) {
+
+			for (Ref<Event> event : myCreated) {
+				Event temp = event.getValue();
+				if (temp != null) {
+					created.add(temp);
+				}
 			}
 		}
 		return created;
 	}
-	public void removeCreated(Event event){
+
+	public void removeCreated(Event event) {
 		myCreated.remove(Ref.create(event));
 	}
-	public void addAttending(Event event){
+
+	public void addAttending(Event event) {
 		myAttending.add(Ref.create(event));
 	}
-	public void removeAttending(Event event){
+
+	public void removeAttending(Event event) {
 		myAttending.remove(Ref.create(event));
 	}
-	public List<Event> getAttending(){
+
+	public List<Event> getAttending() {
 		List<Event> attending = new ArrayList<Event>();
-		if (this.myAttending!=null){
-			for (Ref<Event> event : myAttending){
-				attending.add(event.safeGet());
+		if (this.myAttending != null) {
+			for (Ref<Event> event : myAttending) {
+				Event temp = event.getValue();
+				if (temp != null) {
+					attending.add(temp);
+				}
 			}
 		}
 		return attending;
 	}
-	public boolean equals(PartyPeopleUser other){
-		return this.googleUser.getEmail().equals(other.getGoogleUser().getEmail());
+
+	public boolean equals(PartyPeopleUser other) {
+		return this.googleUser.getEmail().equals(
+				other.getGoogleUser().getEmail());
 	}
 }

@@ -2,6 +2,7 @@
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Collections" %>
 <%@ page import="partypeople.PartyPeopleUser" %>
@@ -207,13 +208,18 @@
 				<%
 			}
 			%>
+			<%
+    		DecimalFormat numberFormat = new DecimalFormat("'$'#0.00");
+			pageContext.setAttribute("price", numberFormat.format(((Event)request.getAttribute("event")).getPrice()));
+    		%>
+    		<div>
+				<p name="price"><%="Price: " + pageContext.getAttribute("price")%></p>
+    		</div>
     		<div>
     			<p name="location"><%="Location: " + ((Event)request.getAttribute("event")).getLocation()%></p>
     		</div>
     		<div id="map"></div>
-    		<div>
-				<p name="price"><%="Price: " + String.valueOf(((Event)request.getAttribute("event")).getPrice())%></p>
-    		</div>
+    		
     		<div>
     		<p>Attendees:</p>
     		<%
