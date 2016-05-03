@@ -177,12 +177,6 @@ public class Event extends PartyPeopleObservable implements Comparable<Event> {
 			this.name = newEvent.getName();
 			
 		}
-		if (!this.owner.equals(newEvent.getOwner())
-				&& !(newEvent.getOwner() == null)) {
-			changed.add("Host");
-			this.owner = Ref.create(newEvent.getOwner());
-			setChanged();
-		}
 		if (!this.location.equals(newEvent.getLocation())
 				&& !(newEvent.getLocation() == null)) {
 			changed.add("Location");
