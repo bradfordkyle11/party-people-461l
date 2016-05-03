@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.annotation.Load;
 
 public class PartyPeopleObservable {
-	private List<Ref<PartyPeopleObserver>> observers;
+	@Load private List<Ref<PartyPeopleObserver>> observers;
 	private boolean changed;
 	
 	public PartyPeopleObservable() {
